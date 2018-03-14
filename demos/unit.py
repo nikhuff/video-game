@@ -36,7 +36,7 @@ class George(unit):
 		self.speed = 0
 		if event.type == pygame.KEYDOWN:
 			if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
-				self.speed = 0.2
+				self.speed = 0.19
 				if event.key == pygame.K_UP:
 					self.y -= 1
 					if self.y < 0:
