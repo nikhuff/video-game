@@ -35,24 +35,25 @@ class George(unit):
 	def handler(self, event):
 		self.speed = 0
 		if event.type == pygame.KEYDOWN:
-			self.speed = 0.15
-			if event.key == pygame.K_UP:
-				self.y -= 1
-				if self.y < 0:
-					self.y = 0
-				self.facing = "up"
-			elif event.key == pygame.K_DOWN:
-				self.y += 1
-				if self.y > (599 - 48):
-					self.y = 599 - 48
-				self.facing = "down"
-			elif event.key == pygame.K_LEFT:
-				self.x -= 1
-				if self.x < 0:
-					self.x = 0
-				self.facing = "left"
-			elif event.key == pygame.K_RIGHT:
-				self.x += 1
-				if self.x > (799 - 48):
-					self.x = 799 - 48
-				self.facing = "right"
+			if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
+				self.speed = 0.2
+				if event.key == pygame.K_UP:
+					self.y -= 1
+					if self.y < 0:
+						self.y = 0
+					self.facing = "up"
+				elif event.key == pygame.K_DOWN:
+					self.y += 1
+					if self.y > (599 - 48):
+						self.y = 599 - 48
+					self.facing = "down"
+				elif event.key == pygame.K_LEFT:
+					self.x -= 1
+					if self.x < 0:
+						self.x = 0
+					self.facing = "left"
+				elif event.key == pygame.K_RIGHT:
+					self.x += 1
+					if self.x > (799 - 48):
+						self.x = 799 - 48
+					self.facing = "right"

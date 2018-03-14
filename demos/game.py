@@ -10,7 +10,7 @@ import event
 
 # back = graphics.load("stars.png")
 
-graphics.background = graphics.load("sky.png")
+graphics.background = graphics.load("beach.png")
 
 george = unit.George(25, 25)
 
