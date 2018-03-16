@@ -1,6 +1,6 @@
 import pygame
 
-pygame.key.set_repeat(20, 20)
+pygame.key.set_repeat(1, 1)
 
 listeners = []
 
