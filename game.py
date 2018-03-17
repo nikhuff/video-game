@@ -1,18 +1,32 @@
-class Game:
+import pygame
+from graphics import Graphics
+from unit import Character
+from physics import Point
+from event import Event
+
+class Game():
     def __init__(self):
-        pass
+        self.graphics = Graphics()
+        self.character = Character(Point(0, 0))
+        self.graphics.register(self.character)
+        self.event = Event()
+        self.event.register(self.character.handler)
 
     def process_input(self):
-        pass
+        self.event.process_input()
 
     def update(self):
-        pass
+        self.character.update()
     
     def render(self):
-        pass
+        self.graphics.render()
 
-    def game(self):
-        while True:
-            self.process_input()
-            self.update()
-            self.render()
+def main():
+    game = Game()
+    while game.event.is_running:
+        game.process_input()
+        game.update()
+        game.render()
+
+if __name__ == '__main__':
+    main()
