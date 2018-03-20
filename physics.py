@@ -5,8 +5,14 @@ class Velocity():
         self.dx = 0
         self.dy = 0
 
+    def setdy(self, dy):
+        self.dy = dy / 4
+
+    def setdx(self, dx):
+        self.dx = dx / 4
+
     def get_speed(self):
-        return abs(self.dx + self.dy)
+        return abs(self.dx + self.dy) / 10
 
 class Point():
     def __init__(self, x, y):
