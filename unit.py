@@ -39,10 +39,10 @@ class Character(Unit):
 
     def get_mapping(self):
         return {
-            "up": [(24 * i, 0, 24, 33) for i in range(4)],
-			"right": [(24 * i, 33, 24, 33) for i in range(4)],
-			"down": [(24 * i, 66, 24, 33) for i in range(4)],
-			"left": [(24 * i, 99, 24, 33) for i in range(4)]
+            "up": [(24 * i, 0, 24, 33) for i in [1, 2, 1, 0]],
+			"right": [(24 * i, 33, 24, 33) for i in [1, 2, 1, 0]],
+			"down": [(24 * i, 66, 24, 33) for i in [1, 2, 1, 0]],
+			"left": [(24 * i, 99, 24, 33) for i in [1, 2, 1, 0]]
         }
 
     def set_direction(self):
