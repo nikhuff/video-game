@@ -29,6 +29,10 @@ class Character(Unit):
         self.frame = (self.frame + self.velocity.get_speed()) % 4
  
     def render(self, surface):
+        # make sure that character is not stuck in an animated frame if he is motionless
+        if self.velocity.get_speed() == 0:
+            self.frame = 0
+        # render the character based on his position
         surface.blit(self.spritesheet,
                      (self.point.x, self.point.y, self.width, self.height),
                      self.mapping[self.facing][int(self.frame)])
@@ -56,13 +60,13 @@ class Character(Unit):
         if event.type == pygame.KEYDOWN:
             if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
                 if event.key == pygame.K_UP:
-                    self.velocity.dy = -1
+                    self.velocity.setdy(-1)
                 elif event.key == pygame.K_DOWN:
-                    self.velocity.dy = 1
+                    self.velocity.setdy(1)
                 elif event.key == pygame.K_LEFT:
-                    self.velocity.dx = -1
+                    self.velocity.setdx(-1)
                 elif event.key == pygame.K_RIGHT:
-                    self.velocity.dx = 1
+                    self.velocity.setdx(1)
             self.set_direction()
 
 if __name__ == '__main__':
