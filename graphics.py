@@ -12,7 +12,7 @@ class Graphics():
         global width, height, screen, background
         pygame.display.init()
         screen = pygame.display.set_mode((width, height))
-        background = self.load("./assets/beach.png")
+        background = self.load("./assets/800x600.png")
 
     def register(self, renderable):
         global renderables

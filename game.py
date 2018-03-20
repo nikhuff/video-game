@@ -7,7 +7,7 @@ from event import Event
 class Game():
     def __init__(self):
         self.graphics = Graphics()
-        self.character = Character(Point(0, 0))
+        self.character = Character(Point(400, 300))
         self.graphics.register(self.character)
         self.event = Event()
         self.event.register(self.character.handler)
