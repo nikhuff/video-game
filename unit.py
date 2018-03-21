@@ -1,7 +1,7 @@
 import pygame
 
 from physics import *
-from graphics import Graphics
+from graphics import Graphics, VIEW_RESOLUTION, SCREEN_RESOLUTION
 
 class Unit():
     def __init__(self, point):
@@ -18,7 +18,7 @@ class Unit():
 class Character(Unit):
     def __init__(self, point):
         super(Character, self).__init__(point)
-        self.spritesheet = Graphics.load("./assets/george.png")
+        self.spritesheet = Graphics.load("./assets/characters/ranger.png")
         self.mapping = self.get_mapping()
         self.height = 33
         self.width = 24
@@ -33,9 +33,21 @@ class Character(Unit):
         if self.velocity.get_speed() == 0:
             self.frame = 0
         # render the character based on his position
-        surface.blit(self.spritesheet,
-                     (self.point.x, self.point.y, self.width, self.height),
-                     self.mapping[self.facing][int(self.frame)])
+        edge = SCREEN_RESOLUTION[0] - VIEW_RESOLUTION[0]
+        if self.point.x > edge and self.point.x < SCREEN_RESOLUTION[0] - edge:
+            if self.point.y > edge and self.point.y < SCREEN_RESOLUTION[0] - edge:
+                surface.blit(self.spritesheet,
+                            (width / 2 - self.width / 2, height / 2 - self.height / 2, self.width, self.height),
+                            self.mapping[self.facing][int(self.frame)])
+            else:
+                surface.blit(self.spritesheet,
+                            (width / 2 - self.width / 2, height / 2 - self.height / 2, self.width, self.height),
+                            self.mapping[self.facing][int(self.frame)])
+        else:
+            surface.blit(self.spritesheet,
+                        (width / 2 - self.width / 2, height / 2 - self.height / 2, self.width, self.height),
+                        self.mapping[self.facing][int(self.frame)])
+
 
     def get_mapping(self):
         return {

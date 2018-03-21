@@ -1,18 +1,22 @@
 import pygame
 
-background = None
+VIEW_RESOLUTION = width, height = [200, 200]
+SCREEN_RESOLUTION = 900, 900
+
+screen = pygame.display.set_mode(SCREEN_RESOLUTION)
 assets = {}
 renderables = []
 
-width = 800
-height = 600
 
 class Graphics():
     def __init__(self):
-        global width, height, screen, background
+        global screen, native_screen
         pygame.display.init()
-        screen = pygame.display.set_mode((width, height))
-        background = self.load("./assets/800x600.png")
+        screen = pygame.display.set_mode(SCREEN_RESOLUTION)
+        native_screen = pygame.Surface(VIEW_RESOLUTION)
+        
+        # screen = self.load("./assets/environment/800x600.png")
+        # native_screen = self.load("./assets/environment/800x600.png")
 
     def register(self, renderable):
         global renderables
@@ -25,16 +29,20 @@ class Graphics():
             renderables.remove(renderable)
 
     def render(self):
-        global screen, background, renderables, width, height
+        global screen, native_screen, renderables, width, height
 
-        screen.fill((0, 0, 0))
+        screen.fill((0, 0, 255))
+        native_screen.fill((255, 0, 0))
 
-        if background:
-            screen.blit(background, (0, 0, width, height))
+        # if background:
+        #     # screen_background = pygame.transform.scale(background, (width * 7, height * 7))
+        #     native_screen.blit(background, (0, 0, width, height))
 
         for r in renderables:
-            r.render(screen)
+            r.render(native_screen)
 
+        pygame.transform.scale(native_screen, SCREEN_RESOLUTION, screen)
+        native_screen.blit(screen, (0, 0, width, height))
         pygame.display.flip()
 
     @staticmethod
