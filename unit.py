@@ -52,10 +52,10 @@ class Character(Unit):
 
     def get_mapping(self):
         return {
-            "up": [(24 * i, 0, 24, 33) for i in [1, 2, 1, 0]],
-			"right": [(24 * i, 33, 24, 33) for i in [1, 2, 1, 0]],
-			"down": [(24 * i, 66, 24, 33) for i in [1, 2, 1, 0]],
-			"left": [(24 * i, 99, 24, 33) for i in [1, 2, 1, 0]]
+            "up": [(24 * i, 0, 24, 32) for i in [1, 2, 1, 0]],
+			"right": [(24 * i, 32, 24, 32) for i in [1, 2, 1, 0]],
+			"down": [(24 * i, 64, 24, 32) for i in [1, 2, 1, 0]],
+			"left": [(24 * i, 96, 24, 32) for i in [1, 2, 1, 0]]
         }
 
     def set_direction(self):
@@ -74,16 +74,16 @@ class Character(Unit):
             if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
                 if event.key == pygame.K_UP:
                     self.velocity.setdy(-1)
-                    audio.footsteps.play()
+                    #audio.footsteps.play()
                 elif event.key == pygame.K_DOWN:
                     self.velocity.setdy(1)
-                    audio.footsteps.play()
+                    #audio.footsteps.play()
                 elif event.key == pygame.K_LEFT:
                     self.velocity.setdx(-1)
-                    audio.footsteps.play()
+                    #audio.footsteps.play()
                 elif event.key == pygame.K_RIGHT:
                     self.velocity.setdx(1)
-                    audio.footsteps.play()
+                    #audio.footsteps.play()
             self.set_direction()
 
 if __name__ == '__main__':
