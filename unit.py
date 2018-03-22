@@ -2,6 +2,7 @@ import pygame
 
 from physics import *
 from graphics import Graphics, VIEW_RESOLUTION, SCREEN_RESOLUTION
+import audio
 
 class Unit():
     def __init__(self, point):
@@ -73,12 +74,16 @@ class Character(Unit):
             if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
                 if event.key == pygame.K_UP:
                     self.velocity.setdy(-1)
+                    audio.footsteps.play()
                 elif event.key == pygame.K_DOWN:
                     self.velocity.setdy(1)
+                    audio.footsteps.play()
                 elif event.key == pygame.K_LEFT:
                     self.velocity.setdx(-1)
+                    audio.footsteps.play()
                 elif event.key == pygame.K_RIGHT:
                     self.velocity.setdx(1)
+                    audio.footsteps.play()
             self.set_direction()
 
 if __name__ == '__main__':

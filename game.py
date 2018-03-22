@@ -3,6 +3,7 @@ from graphics import Graphics
 from unit import Character
 from physics import Point
 from event import Event
+import audio
 
 class Game():
     def __init__(self):
@@ -23,6 +24,7 @@ class Game():
 
 def main():
     game = Game()
+    audio.city.play()
     while game.event.is_running:
         game.process_input()
         game.update()
