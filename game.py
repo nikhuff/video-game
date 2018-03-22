@@ -23,6 +23,7 @@ class Game():
 
 def main():
     game = Game()
+    audio.city.play()
     while game.event.is_running:
         game.process_input()
         game.update()
