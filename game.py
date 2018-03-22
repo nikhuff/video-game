@@ -24,7 +24,7 @@ class Game():
 
 def main():
     game = Game()
-    audio.city.play()
+    #audio.city.play(-1)
     while game.event.is_running:
         game.process_input()
         game.update()
