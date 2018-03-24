@@ -16,6 +16,7 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
         self.load_data()
+        self.text_box = TextBox(self.screen)
 
     def load_data(self):
         self.map = TiledMap(path.join(map_folder, 'city.tmx'))
@@ -65,6 +66,7 @@ class Game:
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+        self.text_box.render()
         pg.display.flip()
         
     def quit(self):
