@@ -113,10 +113,3 @@ class Obstacle(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
-            
-
-
-
-if __name__ == '__main__':
-    unit = Unit(Point(0,0))
-    char = Character(Point(0,0))
