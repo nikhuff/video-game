@@ -46,14 +46,30 @@ class Player(pg.sprite.Sprite):
     def get_keys(self):
         self.dx, self.dy = 0, 0
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT] or keys[pg.K_a]:
+        if keys[pg.K_LEFT]:
             self.dx = -PLAYER_SPEED
-        elif keys[pg.K_RIGHT] or keys[pg.K_d]:
+        elif keys[pg.K_RIGHT]:
             self.dx = PLAYER_SPEED
-        elif keys[pg.K_UP] or keys[pg.K_w]:
+        elif keys[pg.K_UP]:
             self.dy = -PLAYER_SPEED
-        elif keys[pg.K_DOWN] or keys[pg.K_s]:
+        elif keys[pg.K_DOWN]:
             self.dy = PLAYER_SPEED
+        elif keys[pg.K_a]:
+            print("Welcome to punch town, population...You!")
+        elif keys[pg.K_s]:
+            print("Sup my homie?")
+        elif keys[pg.K_d]:
+            print("Fly, you fools!")
+
+    def get_mouse(self):
+        if pg.mouse.get_pressed()[0] == True:
+            x,y = pg.mouse.get_pos()
+            if x > 195 and x < 310 and y > 645 and y < 685:
+                print("Welcome to punch town, population...You!")
+            elif x > 395 and x < 510 and y > 645 and y < 685:
+                print("Sup my homie?")
+            elif x > 600 and x < 715 and y > 645 and y < 685:
+                print("Fly, you fools!")
 
     def check_collision(self):
         if pg.sprite.spritecollideany(self, self.game.walls):
@@ -73,6 +89,7 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
+        self.get_mouse()
         self.x += self.dx * self.game.dt
         self.y += self.dy * self.game.dt
         self.rect.center = (self.x, self.y)
@@ -96,3 +113,10 @@ class Obstacle(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
+            
+
+
+
+if __name__ == '__main__':
+    unit = Unit(Point(0,0))
+    char = Character(Point(0,0))
