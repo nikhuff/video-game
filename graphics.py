@@ -31,6 +31,12 @@ class Graphics():
     def render(self):
         global screen, native_screen, renderables, width, height
 
+        pygame.font.init()
+        # (font-None uses the default font, size, bold, italics, background-stuff that im not really sure about)
+        hello = pygame.font.SysFont(None, 45, False, False, None)
+        text = hello.render("What up my homie?", 1, (255, 153, 18), None)
+        screen.blit(text, (width - 110, 650))
+
         screen.fill((0, 0, 255))
         native_screen.fill((255, 0, 0))
 
@@ -43,7 +49,19 @@ class Graphics():
 
         pygame.transform.scale(native_screen, SCREEN_RESOLUTION, screen)
         native_screen.blit(screen, (0, 0, width, height))
+
+        # Text box stuff
+        rect1 = pygame.Surface((700, 175))
+        rect1.fill((29, 134, 206))
+        pygame.Surface.set_alpha(rect1, 250)
+        dest = width - 110, 650
+        screen.blit(rect1, dest, area=None, special_flags=0)
+        screen.blit(text, (width - 110, 650))
+
         pygame.display.flip()
+
+
+
 
     @staticmethod
     def load(file):
