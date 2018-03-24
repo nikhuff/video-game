@@ -1,3 +1,5 @@
+import os
+
 TITLE = "Spirit Weaver"
 WIDTH = 1024
 HEIGHT = 768
@@ -25,3 +27,10 @@ GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
 
 PLAYER_SPEED = 200
+
+# set up assets
+game_folder = os.path.dirname(__file__)
+assets_folder = os.path.join(game_folder, "assets")
+characters_folder = os.path.join(assets_folder, "characters")
+audio_folder = os.path.join(assets_folder, "audio")
+map_folder = os.path.join(assets_folder, "map")

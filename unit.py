@@ -2,9 +2,6 @@ import pygame as pg
 import os
 from settings import *
 
-# set up assets
-game_folder = os.path.dirname(__file__)
-assets_folder = os.path.join(game_folder, "assets")
 
 class Spritesheet(object):
     def __init__(self, filename):
@@ -25,18 +22,13 @@ class Spritesheet(object):
     def images_at(self, rects, colorkey = None):
         return [self.image_at(rect, colorkey) for rect in rects]
 
-class City:
-    def __init__(self):
-        self.ss = Spritesheet(os.path.join(assets_folder, "city.png"))
-        self.sidewalk = self.ss.image_at(SIDEWALK_MID)
-
 class Player(pg.sprite.Sprite):
     # player sprite
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.ss = Spritesheet(os.path.join(assets_folder, "./characters/ranger.png"))
+        self.ss = Spritesheet(os.path.join(characters_folder, "ranger.png"))
         self.images_up = self.ss.images_at(UP, WHITE)
         self.images_right = self.ss.images_at(RIGHT, WHITE)
         self.images_down = self.ss.images_at(DOWN, WHITE)
@@ -46,8 +38,8 @@ class Player(pg.sprite.Sprite):
         self.frame = 0
         self.draw_speed = .3
         self.rect = self.image.get_rect()
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
+        self.x = x
+        self.y = y
         self.dx = 0
         self.dy = 0
 
@@ -94,25 +86,13 @@ class Player(pg.sprite.Sprite):
 
         self.image = self.current_frame[int(self.frame)]
 
-class Wall(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.walls
+class Obstacle(pg.sprite.Sprite):
+    def __init__(self, game, x, y, w, h):
+        self.groups = game.walls
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(GREEN)
-        self.rect = self.image.get_rect()
+        self.rect = pg.Rect(x, y, w, h)
         self.x = x
         self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
-
-class Sidewalk(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites
-        pg.sprite.Sprite.__init__(self)
-        self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+        self.rect.x = x
+        self.rect.y = y
