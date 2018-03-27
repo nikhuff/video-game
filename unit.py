@@ -28,11 +28,11 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.ss = Spritesheet(os.path.join(characters_folder, "ranger.png"))
-        self.images_up = self.ss.images_at(UP, WHITE)
-        self.images_right = self.ss.images_at(RIGHT, WHITE)
-        self.images_down = self.ss.images_at(DOWN, WHITE)
-        self.images_left = self.ss.images_at(LEFT, WHITE)
+        self.ss = Spritesheet(os.path.join(characters_folder, "main_character.png"))
+        self.images_up = self.ss.images_at(UP, SS)
+        self.images_right = self.ss.images_at(RIGHT, SS)
+        self.images_down = self.ss.images_at(DOWN, SS)
+        self.images_left = self.ss.images_at(LEFT, SS)
         self.current_frame = self.images_down
         self.image = self.current_frame[0]
         self.frame = 0
@@ -101,27 +101,7 @@ class Player(pg.sprite.Sprite):
         else:
             self.frame = (self.frame + self.draw_speed) % 4
 
-<<<<<<< HEAD
-    def handler(self, event):
-        self.velocity.dx, self.velocity.dy = 0, 0
-        if event.type == pygame.KEYDOWN:
-            if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
-                if event.key == pygame.K_UP:
-                    self.velocity.setdy(-1)
-                    audio.footsteps.play()
-                elif event.key == pygame.K_DOWN:
-                    self.velocity.setdy(1)
-                    audio.footsteps.play()
-                elif event.key == pygame.K_LEFT:
-                    self.velocity.setdx(-1)
-                    audio.footsteps.play()
-                elif event.key == pygame.K_RIGHT:
-                    self.velocity.setdx(1)
-                    audio.footsteps.play()
-            self.set_direction()
-=======
         self.image = self.current_frame[int(self.frame)]
->>>>>>> 1a4eb2f7b49e7ca704a0e58b940fa50b5b91d187
 
 class Obstacle(pg.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
