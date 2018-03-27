@@ -1,73 +1,107 @@
-import pygame
+import pygame as pg
+import os
+from settings import *
 
-from physics import *
-from graphics import Graphics, VIEW_RESOLUTION, SCREEN_RESOLUTION
-import audio
 
-class Unit():
-    def __init__(self, point):
-        self.point = point
-        self.velocity = Velocity()
-        self.frame = 0.0
-        self.height = 0
-        self.width = 0
+class Spritesheet(object):
+    def __init__(self, filename):
+        self.sheet = pg.image.load(filename).convert()
+
+    # Load a specific image from a specific rectangle
+    def image_at(self, rectangle, colorkey = None):
+        rect = pg.Rect(rectangle)
+        image = pg.Surface(rect.size).convert()
+        image.blit(self.sheet, (0, 0), rect)
+        if colorkey is not None:
+            if colorkey is -1:
+                colorkey = image.get_at((0,0))
+            image.set_colorkey(colorkey, pg.RLEACCEL)
+        return image
+
+    # Load a whole bunch of images and return them as a list
+    def images_at(self, rects, colorkey = None):
+        return [self.image_at(rect, colorkey) for rect in rects]
+
+class Player(pg.sprite.Sprite):
+    # player sprite
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.ss = Spritesheet(os.path.join(characters_folder, "ranger.png"))
+        self.images_up = self.ss.images_at(UP, WHITE)
+        self.images_right = self.ss.images_at(RIGHT, WHITE)
+        self.images_down = self.ss.images_at(DOWN, WHITE)
+        self.images_left = self.ss.images_at(LEFT, WHITE)
+        self.current_frame = self.images_down
+        self.image = self.current_frame[0]
+        self.frame = 0
+        self.draw_speed = .3
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+
+    def get_keys(self):
+        self.dx, self.dy = 0, 0
+        keys = pg.key.get_pressed()
+        if keys[pg.K_LEFT]:
+            self.dx = -PLAYER_SPEED
+        elif keys[pg.K_RIGHT]:
+            self.dx = PLAYER_SPEED
+        elif keys[pg.K_UP]:
+            self.dy = -PLAYER_SPEED
+        elif keys[pg.K_DOWN]:
+            self.dy = PLAYER_SPEED
+        elif keys[pg.K_a]:
+            print("Welcome to punch town, population...You!")
+        elif keys[pg.K_s]:
+            print("Sup my homie?")
+        elif keys[pg.K_d]:
+            print("Fly, you fools!")
+
+    def get_mouse(self):
+        if pg.mouse.get_pressed()[0] == True:
+            x,y = pg.mouse.get_pos()
+            if x > 195 and x < 310 and y > 645 and y < 685:
+                print("Welcome to punch town, population...You!")
+            elif x > 395 and x < 510 and y > 645 and y < 685:
+                print("Sup my homie?")
+            elif x > 600 and x < 715 and y > 645 and y < 685:
+                print("Fly, you fools!")
+
+    def check_collision(self):
+        if pg.sprite.spritecollideany(self, self.game.walls):
+            self.x -= self.dx * self.game.dt
+            self.y -= self.dy * self.game.dt
+            self.rect.center = (self.x, self.y)
+
+    def get_direction(self):
+        if self.dx > 0:
+            self.current_frame = self.images_right
+        elif self.dx < 0:
+            self.current_frame = self.images_left
+        elif self.dy > 0:
+            self.current_frame = self.images_down
+        elif self.dy < 0:
+            self.current_frame = self.images_up
 
     def update(self):
-        self.point.setx(self.point.x + self.velocity.dx, self.width)
-        self.point.sety(self.point.y + self.velocity.dy, self.height)
+        self.get_keys()
+        self.get_mouse()
+        self.x += self.dx * self.game.dt
+        self.y += self.dy * self.game.dt
+        self.rect.center = (self.x, self.y)
+        self.check_collision()
+        self.get_direction()
 
-class Character(Unit):
-    def __init__(self, point):
-        super(Character, self).__init__(point)
-        self.spritesheet = Graphics.load("./assets/characters/ranger.png")
-        self.mapping = self.get_mapping()
-        self.height = 33
-        self.width = 24
-        self.facing = "down"
-
-    def update(self):
-        super(Character, self).update()
-        self.frame = (self.frame + self.velocity.get_speed()) % 4
- 
-    def render(self, surface):
-        # make sure that character is not stuck in an animated frame if he is motionless
-        if self.velocity.get_speed() == 0:
+        if self.dx == 0 and self.dy == 0:
             self.frame = 0
-        # render the character based on his position
-        edge = SCREEN_RESOLUTION[0] - VIEW_RESOLUTION[0]
-        if self.point.x > edge and self.point.x < SCREEN_RESOLUTION[0] - edge:
-            if self.point.y > edge and self.point.y < SCREEN_RESOLUTION[0] - edge:
-                surface.blit(self.spritesheet,
-                            (width / 2 - self.width / 2, height / 2 - self.height / 2, self.width, self.height),
-                            self.mapping[self.facing][int(self.frame)])
-            else:
-                surface.blit(self.spritesheet,
-                            (width / 2 - self.width / 2, height / 2 - self.height / 2, self.width, self.height),
-                            self.mapping[self.facing][int(self.frame)])
         else:
-            surface.blit(self.spritesheet,
-                        (width / 2 - self.width / 2, height / 2 - self.height / 2, self.width, self.height),
-                        self.mapping[self.facing][int(self.frame)])
+            self.frame = (self.frame + self.draw_speed) % 4
 
-
-    def get_mapping(self):
-        return {
-            "up": [(24 * i, 0, 24, 32) for i in [1, 2, 1, 0]],
-			"right": [(24 * i, 32, 24, 32) for i in [1, 2, 1, 0]],
-			"down": [(24 * i, 64, 24, 32) for i in [1, 2, 1, 0]],
-			"left": [(24 * i, 96, 24, 32) for i in [1, 2, 1, 0]]
-        }
-
-    def set_direction(self):
-        if self.velocity.dx > 0:
-            self.facing = "right"
-        elif self.velocity.dx < 0:
-            self.facing = "left"
-        elif self.velocity.dy > 0:
-            self.facing = "down"
-        elif self.velocity.dy < 0:
-            self.facing = "up"
-
+<<<<<<< HEAD
     def handler(self, event):
         self.velocity.dx, self.velocity.dy = 0, 0
         if event.type == pygame.KEYDOWN:
@@ -85,7 +119,17 @@ class Character(Unit):
                     self.velocity.setdx(1)
                     audio.footsteps.play()
             self.set_direction()
+=======
+        self.image = self.current_frame[int(self.frame)]
+>>>>>>> 1a4eb2f7b49e7ca704a0e58b940fa50b5b91d187
 
-if __name__ == '__main__':
-    unit = Unit(Point(0,0))
-    char = Character(Point(0,0))
+class Obstacle(pg.sprite.Sprite):
+    def __init__(self, game, x, y, w, h):
+        self.groups = game.walls
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.rect = pg.Rect(x, y, w, h)
+        self.x = x
+        self.y = y
+        self.rect.x = x
+        self.rect.y = y
