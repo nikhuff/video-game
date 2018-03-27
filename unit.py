@@ -74,16 +74,16 @@ class Character(Unit):
             if (event.key == pygame.K_UP or event.key == pygame.K_RIGHT or event.key == pygame.K_DOWN or event.key == pygame.K_LEFT):
                 if event.key == pygame.K_UP:
                     self.velocity.setdy(-1)
-                    #audio.footsteps.play()
+                    audio.footsteps.play()
                 elif event.key == pygame.K_DOWN:
                     self.velocity.setdy(1)
-                    #audio.footsteps.play()
+                    audio.footsteps.play()
                 elif event.key == pygame.K_LEFT:
                     self.velocity.setdx(-1)
-                    #audio.footsteps.play()
+                    audio.footsteps.play()
                 elif event.key == pygame.K_RIGHT:
                     self.velocity.setdx(1)
-                    #audio.footsteps.play()
+                    audio.footsteps.play()
             self.set_direction()
 
 if __name__ == '__main__':
