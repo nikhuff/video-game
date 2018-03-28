@@ -83,7 +83,7 @@ class Game:
 def main():
     game = Game()
     game.show_start_screen()
-    # audio.city.play(-1)
+    audio.city.play(-1)
     while game.running:
         game.new()
         game.run()
