@@ -152,7 +152,6 @@
   <object id="12" name="building" x="1830" y="1769" width="305" height="61"/>
   <object id="13" name="building" x="1342" y="1159" width="366" height="305"/>
   <object id="14" name="building" x="1235.25" y="1265.75" width="15.25" height="137.25"/>
-  <object id="15" name="building" x="1784.25" y="1265.75" width="30.5" height="137.25"/>
   <object id="16" name="building" x="1464" y="1586" width="122"/>
   <object id="17" name="building" x="1464" y="1037" width="122"/>
   <object id="18" name="building" x="1586" y="244" width="167.75" height="305"/>
