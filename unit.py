@@ -72,14 +72,18 @@ class Player(pg.sprite.Sprite):
                 print("Fly, you fools!")
 
     def check_collision(self):
+        npc = pg.sprite.spritecollideany(self, self.game.npcs)
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.x -= self.dx * self.game.dt
             self.y -= self.dy * self.game.dt
             self.rect.center = (self.x, self.y)
-        if pg.sprite.spritecollideany(self, self.game.npcs):
+        if npc:
             self.x -= self.dx * self.game.dt
             self.y -= self.dy * self.game.dt
             self.rect.center = (self.x, self.y)
+            keys = pg.key.get_pressed()
+            if keys[pg.K_z]:
+                npc.interact()
 
     def get_direction(self):
         if self.dx > 0:
@@ -133,6 +137,9 @@ class NPC(pg.sprite.Sprite):
             self.x -= self.dx * self.game.dt
             self.y -= self.dy * self.game.dt
             self.rect.center = (self.x, self.y)
+
+    def interact(self):
+        print("you clicked me at position", self.x, self.y)
 
     def bot_move(self):
         pass
