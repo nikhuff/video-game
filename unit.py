@@ -72,10 +72,18 @@ class Player(pg.sprite.Sprite):
                 print("Fly, you fools!")
 
     def check_collision(self):
+        npc = pg.sprite.spritecollideany(self, self.game.npcs)
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.x -= self.dx * self.game.dt
             self.y -= self.dy * self.game.dt
             self.rect.center = (self.x, self.y)
+        if npc:
+            self.x -= self.dx * self.game.dt
+            self.y -= self.dy * self.game.dt
+            self.rect.center = (self.x, self.y)
+            keys = pg.key.get_pressed()
+            if keys[pg.K_z]:
+                npc.interact()
 
     def get_direction(self):
         if self.dx > 0:
@@ -90,6 +98,64 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.get_keys()
         self.get_mouse()
+        self.x += self.dx * self.game.dt
+        self.y += self.dy * self.game.dt
+        self.rect.center = (self.x, self.y)
+        self.check_collision()
+        self.get_direction()
+
+        if self.dx == 0 and self.dy == 0:
+            self.frame = 0
+        else:
+            self.frame = (self.frame + self.draw_speed) % 4
+
+        self.image = self.current_frame[int(self.frame)]
+
+class NPC(pg.sprite.Sprite):
+    # player sprite
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.npcs
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.ss = Spritesheet(os.path.join(characters_folder, "ranger.png"))
+        self.images_up = self.ss.images_at(UP, WHITE)
+        self.images_right = self.ss.images_at(RIGHT, WHITE)
+        self.images_down = self.ss.images_at(DOWN, WHITE)
+        self.images_left = self.ss.images_at(LEFT, WHITE)
+        self.current_frame = self.images_down
+        self.image = self.current_frame[0]
+        self.frame = 0
+        self.draw_speed = .3
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+
+    def check_collision(self):
+        if pg.sprite.spritecollideany(self, self.game.walls):
+            self.x -= self.dx * self.game.dt
+            self.y -= self.dy * self.game.dt
+            self.rect.center = (self.x, self.y)
+
+    def interact(self):
+        print("you clicked me at position", self.x, self.y)
+
+    def bot_move(self):
+        pass
+
+    def get_direction(self):
+        if self.dx > 0:
+            self.current_frame = self.images_right
+        elif self.dx < 0:
+            self.current_frame = self.images_left
+        elif self.dy > 0:
+            self.current_frame = self.images_down
+        elif self.dy < 0:
+            self.current_frame = self.images_up
+
+    def update(self):
+        self.bot_move()
         self.x += self.dx * self.game.dt
         self.y += self.dy * self.game.dt
         self.rect.center = (self.x, self.y)

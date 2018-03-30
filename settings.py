@@ -20,8 +20,6 @@ RIGHT = [(72 * i, 96, 72, 96) for i in [1, 2, 1, 0]]
 DOWN = [(72 * i, 192, 72, 96) for i in [1, 2, 1, 0]]
 LEFT = [(72 * i, 288, 72, 96) for i in [1, 2, 1, 0]]
 
-SIDEWALK_MID = (544, 1360, 64, 64)
-
 TILESIZE = 64
 GRIDWIDTH = WIDTH / TILESIZE
 GRIDHEIGHT = HEIGHT / TILESIZE
