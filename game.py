@@ -42,13 +42,16 @@ class Game:
             if tile_object.name == 'npc':
                 NPC(self, tile_object.x, tile_object.y)
         self.camera = Camera(self.map.width, self.map.height)
+        self.draw_debug = False
+        self.paused = False
         
     def run(self):
         self.playing = True
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
-            self.events() 
-            self.update()
+            self.events()
+            if not self.paused:
+                self.update()
             self.draw()
             
     def update(self):
@@ -63,12 +66,21 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
+                if event.key == pg.K_LALT:
+                    self.draw_debug = not self.draw_debug
+                if event.key == pg.K_p:
+                    self.paused = not self.paused
 
     def draw(self):
         # self.screen.fill(DARKGREY)
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+            if self.draw_debug:
+                pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(sprite.rect), 1)
+        if self.draw_debug:
+            for wall in self.walls:
+                pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(wall.rect), 1)                
         self.text_box.render()
         pg.display.flip()
         
