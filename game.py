@@ -26,6 +26,7 @@ class Game:
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
+        self.npcs = pg.sprite.Group()
         # for row, tiles in enumerate(self.map.data):
         #     for col, tile in enumerate(tiles):
         #         if tile == '1':
@@ -38,13 +39,15 @@ class Game:
             if tile_object.name == 'building':
                 Obstacle(self, tile_object.x, tile_object.y,
                          tile_object.width, tile_object.height)
+            if tile_object.name == 'npc':
+                NPC(self, tile_object.x, tile_object.y)
         self.camera = Camera(self.map.width, self.map.height)
         
     def run(self):
         self.playing = True
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
-            self.events()
+            self.events() 
             self.update()
             self.draw()
             
