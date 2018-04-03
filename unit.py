@@ -71,15 +71,15 @@ class Player(pg.sprite.Sprite):
             elif x > 600 and x < 715 and y > 645 and y < 685:
                 print("Fly, you fools!")
 
-    def check_collision(self):
+    def check_collision(self, dt):
         npc = pg.sprite.spritecollideany(self, self.game.npcs)
         if pg.sprite.spritecollideany(self, self.game.walls):
-            self.x -= self.dx * self.game.dt
-            self.y -= self.dy * self.game.dt
+            self.x -= self.dx * dt
+            self.y -= self.dy * dt
             self.rect.center = (self.x, self.y)
         if npc:
-            self.x -= self.dx * self.game.dt
-            self.y -= self.dy * self.game.dt
+            self.x -= self.dx * dt
+            self.y -= self.dy * dt
             self.rect.center = (self.x, self.y)
             keys = pg.key.get_pressed()
             if keys[pg.K_z]:
@@ -95,13 +95,14 @@ class Player(pg.sprite.Sprite):
         elif self.dy < 0:
             self.current_frame = self.images_up
 
-    def update(self):
+    def update(self, dt):
         self.get_keys()
         self.get_mouse()
-        self.x += self.dx * self.game.dt
-        self.y += self.dy * self.game.dt
+        self.x += self.dx * dt
+        self.y += self.dy * dt
+        print(self.x, self.y)
         self.rect.center = (self.x, self.y)
-        self.check_collision()
+        self.check_collision(dt)
         self.get_direction()
 
         if self.dx == 0 and self.dy == 0:
@@ -132,10 +133,10 @@ class NPC(pg.sprite.Sprite):
         self.dx = 0
         self.dy = 0
 
-    def check_collision(self):
+    def check_collision(self, dt):
         if pg.sprite.spritecollideany(self, self.game.walls):
-            self.x -= self.dx * self.game.dt
-            self.y -= self.dy * self.game.dt
+            self.x -= self.dx * dt
+            self.y -= self.dy * dt
             self.rect.center = (self.x, self.y)
 
     def interact(self):
@@ -154,12 +155,12 @@ class NPC(pg.sprite.Sprite):
         elif self.dy < 0:
             self.current_frame = self.images_up
 
-    def update(self):
+    def update(self, dt):
         self.bot_move()
-        self.x += self.dx * self.game.dt
-        self.y += self.dy * self.game.dt
+        self.x += self.dx * dt
+        self.y += self.dy * dt
         self.rect.center = (self.x, self.y)
-        self.check_collision()
+        self.check_collision(dt)
         self.get_direction()
 
         if self.dx == 0 and self.dy == 0:
