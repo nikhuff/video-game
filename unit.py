@@ -1,7 +1,10 @@
 import pygame as pg
 import os
+import dialogue
 from settings import *
 
+speech = dialogue.Dialogue()
+Sprite_list = dialogue.Sprites()
 
 class Spritesheet(object):
     def __init__(self, filename):
@@ -117,11 +120,11 @@ class NPC(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.npcs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.ss = Spritesheet(os.path.join(characters_folder, "ranger.png"))
-        self.images_up = self.ss.images_at(UP, WHITE)
-        self.images_right = self.ss.images_at(RIGHT, WHITE)
-        self.images_down = self.ss.images_at(DOWN, WHITE)
-        self.images_left = self.ss.images_at(LEFT, WHITE)
+        self.ss = Spritesheet(os.path.join(characters_folder, Sprite_list.random_sprite()))
+        self.images_up = self.ss.images_at(UP, SS)
+        self.images_right = self.ss.images_at(RIGHT, SS)
+        self.images_down = self.ss.images_at(DOWN, SS)
+        self.images_left = self.ss.images_at(LEFT, SS)
         self.current_frame = self.images_down
         self.image = self.current_frame[0]
         self.frame = 0
@@ -131,6 +134,12 @@ class NPC(pg.sprite.Sprite):
         self.y = y
         self.dx = 0
         self.dy = 0
+        self.dialogue = "I AM ERROR"
+
+
+    #function to call to generate dialogue returns a sentence for NPC to say
+    def generate_dialogue(self):
+        return self.dialogue
 
     def check_collision(self):
         if pg.sprite.spritecollideany(self, self.game.walls):
@@ -139,7 +148,8 @@ class NPC(pg.sprite.Sprite):
             self.rect.center = (self.x, self.y)
 
     def interact(self):
-        print("you clicked me at position", self.x, self.y)
+        self.dialogue = speech.random_sentence()
+        return self.dialogue
 
     def bot_move(self):
         pass

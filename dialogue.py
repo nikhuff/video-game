@@ -1,28 +1,29 @@
-mport pygame as pg
+import pygame as pg
 import os
 from settings import *
 import random
 
+
 class Dialogue:
     def __init__(self):
-        self.sentences1 = ["Sometimes, all you need to do is completely make a fool of yourself and laugh it off to realise that life isn’t so bad after all.",
-                 "Last Friday I thought I saw a spotted striped blue worm shake hands with a legless lizard.",
+        self.sentences1 = ["Sometimes, all you need to do is completely make a fool of yourself and laugh it off to realize that life isn’t so bad after all.",
+                 "Last Friday I dreamed a spotted striped blue worm shook hands with a legless lizard.",
                  "I'd rather be a bird than a fish.",
-                 "I want more detailed information. guess I'll go to the library",
+                 "I want more detailed information for my report. guess I'll go to the library",
                  "Where do random thoughts come from?",
-                 "Steven turned in the research paper on Friday; otherwise, he would have not passed the class.",
-                 "Let me help you with your baggage.",
-                 "Some random person always comes asking for bread on fridays.",
+                 "Steven turned in his research paper on Friday; otherwise, he would have not passed the class.",
+                 "Everyone has rough days, but it makes the good days even better!",
+                 "Some random person always comes asking for bread on Saturdays.",
                  "Sally told us a very exciting adventure story.",
                  "Don't step on the broken glass.",
-                 "Yeah, I think the city, It is a good environment for learning English, no?",
+                 "Yes, I think the city, It is a good place for learning English, no?",
                  "I often see the time 11:11 or 12:34 on clocks.",
                  "Ever wonder what makes your skin stay on?",
                  "my fortune cookie said: Abstraction is often one floor above you.",
                  "I think I will buy the red car, or I will lease the blue one.",
                  "We need to rent a room for our party tomorrow.",
                  "The body may perhaps compensate for the loss of true metaphysics.",
-                 "My Mum tries to be cool by saying that she likes all the same things that I do.",
+                 "My Mom tries to be cool by saying that she likes all the same things that I do.",
                  "Tom got a small piece of pie at the store, so he didn't share with me.",
                  "I am counting my calories, yet I really want dessert.",
                  "I really want to go to work, but I am too sick to drive.",
@@ -30,12 +31,12 @@ class Dialogue:
                  "I hear that Maggie is very pretty.",
                  "If Purple People Eaters are real… where do they find purple people to eat?",
                  "A song can make or ruin a person’s day if they let it get to them.",
-                 "I currently 4 rocks in my pocket… and I don’t know why.",
+                 "I currently have 4 rocks in my pocket… and I don’t know why.",
                  "A glittering gem is not enough. sometimes you need 2 glittering gems",
                  "Someone I know recently combined Maple Syrup & buttered Popcorn thinking it would taste like caramel popcorn. It didn’t and they don’t recommend anyone else try it either.",
                  "Everyone was busy, so I went to that new movie alone.",
                  "If the Easter Bunny and the Tooth Fairy had babies would they take your teeth and leave chocolate for you?",
-                 "Lets all be unique together until we realise we are all the same.",
+                 "Lets all be unique together until we realize we are all the same.",
                  "What was the person thinking when they discovered cow’s milk was fine for human consumption… and why did they drink it in the first place!?",
                  "Italy is my favorite country; in fact, I plan to spend three weeks there next year.",
                  "The quick brown fox jumps over the lazy dog... or so they say",
@@ -47,7 +48,7 @@ class Dialogue:
                  "I am so blue I'm greener than purple.",
                  "I stepped on a Corn Flake, I guess now I'm a Cereal Killer",
                  "I was asked to name all the presidents... I thought they already had names?",
-                 "On a scale from one to ten what is your favourite colour of the alphabet.",
+                 "On a scale from one to ten what is your favorite color of the alphabet.",
                  "Look, a distraction!",
                  "When life gives you lemons, chuck them at people you hate",
                  "Oh no, you're one of THEM!!!!",
@@ -82,9 +83,9 @@ class Dialogue:
                  "What's with your hair? are you some kind of anime character?",
                  "I should probably get back to work.",
                  "The city is a busy place, but I enjoy living here.",
-                 "The building here all look so similar, it's easy to get lost!",
+                 "The buildings here all look so similar, it's easy to get lost!",
                  "Sometimes while walking around I count all the bricks I step on",
-                 "It feels like theres always construction going on in the city!",
+                 "It feels like there's always construction going on in this city!",
                  "I moved here from the country, it's way different!",
                  "The cost of living here is so expensive!",
                  "Driving is faster but walking is much healthier!",
@@ -97,20 +98,60 @@ class Dialogue:
     #pull sentence from list one to put in list two. If sentence one list is empty copy in sentence
     # list 2 to list 1 and delete the contents of list 2
 
-
-
     def random_sentence(self):
         if self.sentences1:
-            rand = random.randint(0, len(sentences1)-1)
+            rand = random.randint(0, len(self.sentences1)-1)
             sentence = self.sentences1[rand]
             self.sentences2.append(sentence)
             self.sentences1.remove(sentence)
             return sentence
         else:
             self.sentences1 = self.sentences2[:]
-            sentences2.clear()
-            rand = random.randint(0, len(sentences1) - 1)
-            sentence = sentences1[rand]
-            sentences2.append(sentence)
-            sentences1.remove(sentence)
+            self.sentences2.clear()
+            rand = random.randint(0, len(self.sentences1) - 1)
+            sentence = self.sentences1[rand]
+            self.sentences2.append(sentence)
+            self.sentences1.remove(sentence)
             return sentence
+class Sprites:
+    def __init__(self):
+        self.SpriteSheets1 = [
+            "Mask-M-01.png",
+            "Ranger-M-01.png",
+            "Snow-M-01.png",
+            "Townfolk-Adult-M.png",
+            "Townfolk-Adult-F.png",
+            "Townfolk-Adult-F-001.png",
+            "Townfolk-Adult-F-002.png",
+            "Townfolk-Adult-F-005.png",
+            "Townfolk-Adult-F-006.png",
+            "Townfolk-Adult-M.png",
+            "Townfolk-Adult-M-003.png",
+            "Townfolk-Adult-M-001.png",
+            "Townfolk-Adult-M-002.png",
+            "Townfolk-Adult-M-005.png",
+            "Townfolk-Adult-M-006.png",
+            "Townfolk-Adult-M-007.png",
+            "Townfolk-Adult-M-008.png",
+            "Townfolk-Adult-M-009.png",
+            "Townfolk-Old-F.png",
+            "Townfolk-old-M.png",
+            "Townfolk-Old-M-002.png"
+        ]
+        self.SpriteSheets2 = []
+
+    def random_sprite(self):
+        if self.SpriteSheets1:
+            rand = random.randint(0, len(self.SpriteSheets1) - 1)
+            sprite = self.SpriteSheets1[rand]
+            self.SpriteSheets2.append(sprite)
+            self.SpriteSheets1.remove(sprite)
+            return sprite
+        else:
+            self.SpriteSheets1 = self.SpriteSheets2[:]
+            self.SpriteSheets2.clear()
+            rand = random.randint(0, len(self.SpriteSheets1) - 1)
+            sprite = self.SpriteSheets1[rand]
+            self.SpriteSheets2.append(sprite)
+            self.SpriteSheets1.remove(sprite)
+            return sprite
