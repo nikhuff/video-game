@@ -1,5 +1,6 @@
 import pygame as pg
 import sys
+import random
 from os import path
 
 from settings import *
@@ -7,32 +8,170 @@ from graphics import *
 from unit import *
 import audio
 
-class Game:
-    def __init__(self):
-        pg.init()
-        pg.mixer.init()
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption(TITLE)
-        self.clock = pg.time.Clock()
-        self.running = True
-        self.load_data()
-        self.text_box = TextBox(self.screen)
 
-    def load_data(self):
+class Game(object):
+    """
+    A single instance of this class is responsible for 
+    managing which individual game state is active
+    and keeping it updated. It also handles many of
+    pygame's nuts and bolts (managing the event 
+    queue, framerate, updating the display, etc.). 
+    and its run method serves as the "game loop".
+    """
+    def __init__(self, states, start_state):
+        """
+        Initialize the Game object.
+        
+        screen: the pygame display surface
+        states: a dict mapping state-names to GameState objects
+        start_state: name of the first active game state 
+        """
+        self.done = False
+        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
+        self.clock = pg.time.Clock()
+        self.dt = self.clock.tick(FPS) / 1000        
+        self.states = states
+        self.state_name = start_state
+        self.state = self.states[self.state_name]
+        
+    def event_loop(self):
+        """Events are passed for handling to the current state."""
+        for event in pg.event.get():
+            self.state.get_event(event)
+            
+    def flip_state(self):
+        """Switch to the next game state."""
+        current_state = self.state_name
+        next_state = self.state.next_state
+        self.state.done = False
+        self.state_name = next_state
+        persistent = self.state.persist
+        self.state = self.states[self.state_name]
+        self.state.startup(persistent)
+    
+    def update(self, dt):
+        """
+        Check for state flip and update active state.
+        
+        dt: milliseconds since last frame
+        """
+        if self.state.quit:
+            self.done = True
+        elif self.state.done:
+            self.flip_state()    
+        self.state.update(dt)
+        
+    def draw(self):
+        """Pass display surface to active state for drawing."""
+        self.state.draw(self.screen)
+        
+    def run(self):
+        """
+        Pretty much the entirety of the game's runtime will be
+        spent inside this while loop.
+        """ 
+        while not self.done:
+            dt = self.clock.tick(FPS) / 1000
+            self.event_loop()
+            self.update(dt)
+            self.draw()
+            pg.display.update()
+            
+            
+class GameState(object):
+    """
+    Parent class for individual game states to inherit from. 
+    """
+    def __init__(self):
+        self.done = False
+        self.quit = False
+        self.next_state = None
+        self.screen_rect = pg.display.get_surface().get_rect()
+        self.persist = {}
+        self.font = pg.font.Font(None, 24)
+        
+    def startup(self, persistent):
+        """
+        Called when a state resumes being active.
+        Allows information to be passed between states.
+        
+        persistent: a dict passed from state to state
+        """
+        self.persist = persistent        
+        
+    def get_event(self, event):
+        """
+        Handle a single event passed by the Game object.
+        """
+        pass
+        
+    
+    def update(self, dt):
+        """
+        Update the state. Called by the Game object once
+        per frame. 
+        
+        dt: time since last frame
+        """
+        pass
+        
+    def draw(self, surface):
+        """
+        Draw everything to the screen.
+        """
+        pass
+        
+        
+class TitleScreen(GameState):
+    def __init__(self):
+        super(TitleScreen, self).__init__()
+        self.title = self.font.render("Spirit Weaver", True, pg.Color("dodgerblue"))
+        self.title_rect = self.title.get_rect(center=(WIDTH/2, HEIGHT/2))
+        self.persist["screen_color"] = "black"
+        self.next_state = "GAMEPLAY"
+        self.options = ["New Game", "Load", "Quit"]
+        self.index = 0
+        self.selected = self.options[self.index]
+        
+    def get_event(self, event):
+        if event.type == pg.QUIT:
+            self.quit = True
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_UP]:
+            self.index = (self.index - 1) % 3
+            self.selected = self.options[self.index]            
+        elif keys[pg.K_DOWN]:
+            self.index = (self.index + 1) % 3
+            self.selected = self.options[self.index]
+        elif keys[pg.K_z]:
+            if self.selected == "New Game":
+                self.next_state = "GAMEPLAY"
+                self.done = True
+            elif self.selected == "Quit":
+                self.quit = True
+
+    
+    def draw(self, surface):
+        surface.fill(pg.Color("black"))
+        surface.blit(self.title, self.title_rect)
+        for index, option in enumerate(self.options):
+            line = self.font.render(option, True, pg.Color("dodgerblue"))
+            line_rect = line.get_rect(center=(WIDTH/2, HEIGHT/2 + 50 + 20 * (index + 1)))
+            surface.blit(line, line_rect)
+        option_rect = pg.Rect(WIDTH/2 - 55, HEIGHT/2 + 45 + 20 * (self.index + 1), 10, 10)
+        pg.draw.rect(surface, pg.Color("darkgreen"), option_rect)
+    
+    
+class Gameplay(GameState):
+    def __init__(self):
+        super(Gameplay, self).__init__()
         self.map = TiledMap(path.join(map_folder, 'city.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
-
-    def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.npcs = pg.sprite.Group()
-        # for row, tiles in enumerate(self.map.data):
-        #     for col, tile in enumerate(tiles):
-        #         if tile == '1':
-        #             Wall(self, col, row)
-        #         if tile == 'P':
-        #             self.player = Player(self, col, row)
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == 'player':
                 self.player = Player(self, tile_object.x, tile_object.y)
@@ -43,68 +182,138 @@ class Game:
                 NPC(self, tile_object.x, tile_object.y)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
-        self.paused = False
         
-    def run(self):
-        self.playing = True
-        while self.playing:
-            self.dt = self.clock.tick(FPS) / 1000
-            self.events()
-            if not self.paused:
-                self.update()
-            self.draw()
-            
-    def update(self):
-        self.all_sprites.update()
-        self.camera.update(self.player)
-    
-    def events(self):
-        for event in pg.event.get():
-            # check for closing window
-            if event.type == pg.QUIT:
-                self.quit()
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_ESCAPE:
-                    self.quit()
-                if event.key == pg.K_LALT:
-                    self.draw_debug = not self.draw_debug
-                if event.key == pg.K_p:
-                    self.paused = not self.paused
+    def startup(self, persistent):
+        self.persist = persistent
 
-    def draw(self):
+        
+    def get_event(self, event):
+        if event.type == pg.QUIT:
+            self.quit = True
+        elif event.type == pg.KEYUP:
+            if event.key == pg.K_x:
+                self.next_state = "TITLE"
+                self.done = True
+            elif event.key == pg.K_f:
+                self.next_state = "BATTLE"
+                self.done = True
+         
+    def update(self, dt):
+        self.all_sprites.update(dt)
+        self.camera.update(self.player)
+                 
+    def draw(self, surface):
         # self.screen.fill(DARKGREY)
-        self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
+        surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
+            surface.blit(sprite.image, self.camera.apply(sprite))
             if self.draw_debug:
-                pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(sprite.rect), 1)
+                pg.draw.rect(surface, GREEN, self.camera.apply_rect(sprite.rect), 1)
         if self.draw_debug:
             for wall in self.walls:
-                pg.draw.rect(self.screen, GREEN, self.camera.apply_rect(wall.rect), 1)                
-        self.text_box.render()
+                pg.draw.rect(surface, GREEN, self.camera.apply_rect(wall.rect), 1)                
+        # self.text_box.render()
         pg.display.flip()
+
+
+class Battle(GameState):
+    def __init__(self):
+        super(Battle, self).__init__()
+        self.choice = None
+        self.dest = 0,0
+        self.dest2 = 450,450
+        self.rect1 = pg.Surface((115, 40))
+        self.rect2 = pg.Surface((10, 10))
+        self.rect2.fill((29, 134, 206))
+        self.hello = pg.font.SysFont(None, 45, False, False, None)
+        self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
+        self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
+        self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
+        self.attChoice = 0
         
-    def quit(self):
-        if self.playing:
-            self.playing = False
-        self.running = False
+    def startup(self, persistent):
+        self.persist = persistent
+        self.choice = None
+        
+    def get_event(self, event):
+        if event.type == pg.QUIT:
+            self.quit = True
+        keys = pg.key.get_pressed()
+        if keys[pg.K_a]:
+            self.choice = 2
+        elif keys[pg.K_s]:
+            self.choice = 3
+        elif keys[pg.K_d]:
+            self.choice = 4
+            self.rand = random.randrange(1, 3)
+        if pg.mouse.get_pressed()[0] == True:
+            x,y = pg.mouse.get_pos()
+            if x > 195 and x < 310 and y > 645 and y < 685:
+                self.choice = 2
+            elif x > 395 and x < 510 and y > 645 and y < 685:
+                self.choice = 3
+            elif x > 600 and x < 715 and y > 645 and y < 685:
+                self.choice = 4
+        
+    def update(self, dt):
+        if self.choice == 1:
+            self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
+            self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
+            self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
+        elif self.choice == 2:
+            self.text = self.hello.render("Punch", 1, (255, 153, 18), None)
+            self.text2 = self.hello.render("Kick", 1, (255, 153, 18), None)
+            self.text3 = self.hello.render("Headbutt", 1, (255, 153, 18), None)
+        elif self.choice == 3:
+            self.text = self.hello.render("Insult", 1, (255, 153, 18), None)
+            self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
+            self.text3 = self.hello.render("Meh meh meh", 1, (255, 153, 18), None)
+            self.attChoice = 0
+            keysTalk = pg.key.get_pressed()
+            if keysTalk[pg.K_q]:
+                self.attChoice = 1
+            elif keysTalk[pg.K_w]:
+                self.attChoice = 2
+            elif keysTalk[pg.K_e]:
+                self.attChoice = 3
+            
+            if self.attChoice == 1:
+                print("You done insulted me!")
+            elif self.attChoice == 2:
+                print("You done complimented me!")
+            elif self.attChoice == 3:
+                print("You done creeped me out!.....weirdo")
+        elif self.choice == 4:
+            if self.rand == 1:
+                self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
+            else:
+                self.text = self.hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
+                self.next_state = "GAMEPLAY"
+                self.done = True
+                 
+    def draw(self, surface):
+        surface.fill(pg.Color("black"))
+        self.rect1.fill((29, 134, 206))
+        pg.Surface.set_alpha(self.rect1, 250)
+        self.dest = 0, 600
+        surface.blit(self.rect1, self.dest, area=None, special_flags=0)
+        surface.blit(self.text, self.dest)
 
-    def show_start_screen(self):
-        pass
+        self.dest = 0, 640
+        surface.blit(self.text2, self.dest)
 
-    def show_go_screen(self):
-        pass
-
-def main():
-    game = Game()
-    game.show_start_screen()
-    audio.city.play(-1)
-    while game.running:
-        game.new()
-        game.run()
-        game.show_go_screen()
-
-pg.quit()
-
-if __name__ == '__main__':
-    main()
+        self.dest = 0, 680
+        surface.blit(self.text3, self.dest)
+        # self.text_box.render()
+        pg.display.flip()
+    
+if __name__ == "__main__":
+    pg.init()
+    pg.mixer.init()    
+    states = {"TITLE": TitleScreen(),
+              "GAMEPLAY": Gameplay(),
+              "BATTLE": Battle()}
+    game = Game(states, "TITLE")
+    game.run()
+    pg.quit()
+    sys.exit()
