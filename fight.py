@@ -1,7 +1,6 @@
 import pygame as pg
 import random
 
-
 pg.init()
 pg.font.init()
 pic = pg.Surface((200,200))
