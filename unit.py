@@ -1,5 +1,6 @@
 import pygame as pg
 import os
+import random
 import dialogue
 from settings import *
 
@@ -87,6 +88,10 @@ class Player(pg.sprite.Sprite):
             keys = pg.key.get_pressed()
             if keys[pg.K_z]:
                 npc.interact()
+            npc.x -= npc.dx * dt
+            npc.y -= npc.dy * dt
+            npc.dx = 0
+            npc.dy = 0
 
     def get_direction(self):
         if self.dx > 0:
@@ -103,7 +108,6 @@ class Player(pg.sprite.Sprite):
         self.get_mouse()
         self.x += self.dx * dt
         self.y += self.dy * dt
-        print(self.x, self.y)
         self.rect.center = (self.x, self.y)
         self.check_collision(dt)
         self.get_direction()
@@ -136,7 +140,7 @@ class NPC(pg.sprite.Sprite):
         self.dx = 0
         self.dy = 0
         self.dialogue = "I AM ERROR"
-
+        self.count = 0
 
     #function to call to generate dialogue returns a sentence for NPC to say
     def generate_dialogue(self):
@@ -144,16 +148,29 @@ class NPC(pg.sprite.Sprite):
 
     def check_collision(self, dt):
         if pg.sprite.spritecollideany(self, self.game.walls):
-            self.x -= self.dx * dt
-            self.y -= self.dy * dt
+            self.dx *= -1
+            self.dy *= -1
             self.rect.center = (self.x, self.y)
-
     def interact(self):
         self.dialogue = speech.random_sentence()
         return self.dialogue
 
     def bot_move(self):
-        pass
+        self.dx = 0
+        self.dy = 0
+        movement = 50
+        direction = random.randint(0,8)
+        if direction == 0:
+            self.dx -= movement
+        if direction == 1:
+            self.dx += movement
+        if direction == 2:
+            self.dy -= movement
+        if direction == 3:
+            self.dx += movement
+        if direction >= 4:
+            self.dx = 0
+            self.dy = 0
 
     def get_direction(self):
         if self.dx > 0:
@@ -166,12 +183,16 @@ class NPC(pg.sprite.Sprite):
             self.current_frame = self.images_up
 
     def update(self, dt):
-        self.bot_move()
+        self.count += 1
+        if self.count == 1:
+            self.bot_move()
         self.x += self.dx * dt
         self.y += self.dy * dt
         self.rect.center = (self.x, self.y)
         self.check_collision(dt)
         self.get_direction()
+        if self.count == 80:
+            self.count = 0
 
         if self.dx == 0 and self.dy == 0:
             self.frame = 0

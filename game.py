@@ -33,7 +33,7 @@ class Game(object):
         self.states = states
         self.state_name = start_state
         self.state = self.states[self.state_name]
-        
+        self.music = audio.title.play(-1)
     def event_loop(self):
         """Events are passed for handling to the current state."""
         for event in pg.event.get():
@@ -48,7 +48,13 @@ class Game(object):
         persistent = self.state.persist
         self.state = self.states[self.state_name]
         self.state.startup(persistent)
-    
+        self.music.stop()
+        if self.state_name == "GAMEPLAY":
+            self.music = audio.city.play(-1)
+        if self.state_name == "BATTLE":
+            self.music = audio.battle.play(-1)
+
+
     def update(self, dt):
         """
         Check for state flip and update active state.
@@ -186,7 +192,7 @@ class Gameplay(GameState):
     def startup(self, persistent):
         self.persist = persistent
 
-        
+
     def get_event(self, event):
         if event.type == pg.QUIT:
             self.quit = True
@@ -310,7 +316,7 @@ class Battle(GameState):
     
 if __name__ == "__main__":
     pg.init()
-    pg.mixer.init()    
+    pg.mixer.init()
     states = {"TITLE": TitleScreen(),
               "GAMEPLAY": Gameplay(),
               "BATTLE": Battle()}
