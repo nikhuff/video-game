@@ -1,5 +1,6 @@
 import pygame as pg
 import sys
+import random
 from os import path
 
 from settings import *
@@ -193,6 +194,9 @@ class Gameplay(GameState):
             if event.key == pg.K_x:
                 self.next_state = "TITLE"
                 self.done = True
+            elif event.key == pg.K_f:
+                self.next_state = "BATTLE"
+                self.done = True
          
     def update(self, dt):
         self.all_sprites.update(dt)
@@ -210,14 +214,105 @@ class Gameplay(GameState):
                 pg.draw.rect(surface, GREEN, self.camera.apply_rect(wall.rect), 1)                
         # self.text_box.render()
         pg.display.flip()
+
+
+class Battle(GameState):
+    def __init__(self):
+        super(Battle, self).__init__()
+        self.choice = None
+        self.dest = 0,0
+        self.dest2 = 450,450
+        self.rect1 = pg.Surface((115, 40))
+        self.rect2 = pg.Surface((10, 10))
+        self.rect2.fill((29, 134, 206))
+        self.hello = pg.font.SysFont(None, 45, False, False, None)
+        self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
+        self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
+        self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
+        self.attChoice = 0
         
+    def startup(self, persistent):
+        self.persist = persistent
+        self.choice = None
+        
+    def get_event(self, event):
+        if event.type == pg.QUIT:
+            self.quit = True
+        keys = pg.key.get_pressed()
+        if keys[pg.K_a]:
+            self.choice = 2
+        elif keys[pg.K_s]:
+            self.choice = 3
+        elif keys[pg.K_d]:
+            self.choice = 4
+            self.rand = random.randrange(1, 3)
+        if pg.mouse.get_pressed()[0] == True:
+            x,y = pg.mouse.get_pos()
+            if x > 195 and x < 310 and y > 645 and y < 685:
+                self.choice = 2
+            elif x > 395 and x < 510 and y > 645 and y < 685:
+                self.choice = 3
+            elif x > 600 and x < 715 and y > 645 and y < 685:
+                self.choice = 4
+        
+    def update(self, dt):
+        if self.choice == 1:
+            self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
+            self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
+            self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
+        elif self.choice == 2:
+            self.text = self.hello.render("Punch", 1, (255, 153, 18), None)
+            self.text2 = self.hello.render("Kick", 1, (255, 153, 18), None)
+            self.text3 = self.hello.render("Headbutt", 1, (255, 153, 18), None)
+        elif self.choice == 3:
+            self.text = self.hello.render("Insult", 1, (255, 153, 18), None)
+            self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
+            self.text3 = self.hello.render("Meh meh meh", 1, (255, 153, 18), None)
+            self.attChoice = 0
+            keysTalk = pg.key.get_pressed()
+            if keysTalk[pg.K_q]:
+                self.attChoice = 1
+            elif keysTalk[pg.K_w]:
+                self.attChoice = 2
+            elif keysTalk[pg.K_e]:
+                self.attChoice = 3
+            
+            if self.attChoice == 1:
+                print("You done insulted me!")
+            elif self.attChoice == 2:
+                print("You done complimented me!")
+            elif self.attChoice == 3:
+                print("You done creeped me out!.....weirdo")
+        elif self.choice == 4:
+            if self.rand == 1:
+                self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
+            else:
+                self.text = self.hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
+                self.next_state = "GAMEPLAY"
+                self.done = True
+                 
+    def draw(self, surface):
+        surface.fill(pg.Color("black"))
+        self.rect1.fill((29, 134, 206))
+        pg.Surface.set_alpha(self.rect1, 250)
+        self.dest = 0, 600
+        surface.blit(self.rect1, self.dest, area=None, special_flags=0)
+        surface.blit(self.text, self.dest)
+
+        self.dest = 0, 640
+        surface.blit(self.text2, self.dest)
+
+        self.dest = 0, 680
+        surface.blit(self.text3, self.dest)
+        # self.text_box.render()
+        pg.display.flip()
     
 if __name__ == "__main__":
     pg.init()
     pg.mixer.init()    
     states = {"TITLE": TitleScreen(),
               "GAMEPLAY": Gameplay(),
-              "BATTLE": None}
+              "BATTLE": Battle()}
     game = Game(states, "TITLE")
     game.run()
     pg.quit()
