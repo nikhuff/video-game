@@ -8,6 +8,8 @@ pic = pg.Surface((200,200))
 width, height = 900,900
 choice = 1
 
+textboxy = pg.image.load('textbox.png')
+
 while True:
 
     screen = pg.display.set_mode((900,900))
@@ -30,16 +32,6 @@ while True:
         rand = random.randrange(1, 3)
 
 
-    if pg.mouse.get_pressed()[0] == True:
-        x,y = pg.mouse.get_pos()
-        if x > 195 and x < 310 and y > 645 and y < 685:
-            choice = 2
-        elif x > 395 and x < 510 and y > 645 and y < 685:
-            choice = 3
-        elif x > 600 and x < 715 and y > 645 and y < 685:
-            choice = 4
-
-
     # (font-None uses the default font, size, bold, italics, background-stuff that im not really sure about)
     hello = pg.font.SysFont(None, 45, False, False, None)
 
@@ -48,18 +40,15 @@ while True:
         text2 = hello.render("Talk", 1, (255, 153, 18), None)
         text3 = hello.render("Run", 1, (255, 153, 18), None)
 
-        rect1 = pg.Surface((1100, 400))
-        rect1.fill((29, 134, 206))
-        pg.Surface.set_alpha(rect1, 250)
-
         dest = 0, 600
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        screen.blit(textboxy, dest, area=None, special_flags=0)
+        dest = 30, 630
         screen.blit(text, dest)
 
-        dest = 0, 640
+        dest = 30, 670
         screen.blit(text2, dest)
 
-        dest = 0, 680
+        dest = 30, 710
         screen.blit(text3, dest)
 
     elif choice == 2:
@@ -70,20 +59,16 @@ while True:
         text3 = hello.render("Headbutt", 1, (255, 153, 18), None)
         screen.blit(text, (width - 310, 650))
 
-        rect1 = pg.Surface((1100, 400))
-        rect1.fill((29, 134, 206))
-        pg.Surface.set_alpha(rect1, 250)
 
         dest = 0, 600
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        screen.blit(textboxy, dest, area=None, special_flags=0)
+        dest = 30, 630
         screen.blit(text, dest)
 
-        dest = 0, 640
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        dest = 30, 670
         screen.blit(text2, dest)
 
-        dest = 0, 680
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        dest = 30, 710
         screen.blit(text3, dest)
 
         keysAtt = pg.key.get_pressed()
@@ -111,20 +96,15 @@ while True:
         text3 = hello.render("Meh meh meh", 1, (255, 153, 18), None)
         screen.blit(text, (width - 310, 650))
 
-        rect1 = pg.Surface((1100, 300))
-        rect1.fill((29, 134, 206))
-        pg.Surface.set_alpha(rect1, 250)
-
         dest = 0, 600
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        screen.blit(textboxy, dest, area=None, special_flags=0)
+        dest = 30, 630
         screen.blit(text, dest)
 
-        dest = 0, 640
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        dest = 30, 670
         screen.blit(text2, dest)
 
-        dest = 0, 680
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        dest = 30, 710
         screen.blit(text3, dest)
 
         keysTalk = pg.key.get_pressed()
@@ -147,15 +127,16 @@ while True:
         if rand == 1:
             text = hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
         else:
-            text = hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
-
-        rect1 = pg.Surface((1100, 300))
-        rect1.fill((29, 134, 206))
-        pg.Surface.set_alpha(rect1, 250)
+            text = hello.render("with human feces lubricating your pants,", 1, (255, 153, 18), None)
+            textLine2 = hello.render("you manage to run fast enough to escape", 1, (255, 153, 18), None)
 
         dest = 0, 600
-        screen.blit(rect1, dest, area=None, special_flags=0)
+        screen.blit(textboxy, dest, area=None, special_flags=0)
+        dest = 30, 630
         screen.blit(text, dest)
+        dest = 30, 660
+        if rand != 1:
+            screen.blit(textLine2, dest)
 
 
     pg.display.flip()
