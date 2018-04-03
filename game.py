@@ -219,12 +219,11 @@ class Gameplay(GameState):
 class Battle(GameState):
     def __init__(self):
         super(Battle, self).__init__()
+        self.textboxy = pg.image.load('textbox.png')
+        self.rand = 0
         self.choice = None
         self.dest = 0,0
         self.dest2 = 450,450
-        self.rect1 = pg.Surface((115, 40))
-        self.rect2 = pg.Surface((10, 10))
-        self.rect2.fill((29, 134, 206))
         self.hello = pg.font.SysFont(None, 45, False, False, None)
         self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
         self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
@@ -293,17 +292,19 @@ class Battle(GameState):
                  
     def draw(self, surface):
         surface.fill(pg.Color("black"))
-        self.rect1.fill((29, 134, 206))
-        pg.Surface.set_alpha(self.rect1, 250)
-        self.dest = 0, 600
-        surface.blit(self.rect1, self.dest, area=None, special_flags=0)
+
+        self.dest = 62, 462
+        surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
+        self.dest = 92, 492
         surface.blit(self.text, self.dest)
 
-        self.dest = 0, 640
-        surface.blit(self.text2, self.dest)
+        if self.rand != 1:
+            self.dest = 92, 522
+            surface.blit(self.text2, self.dest)
 
-        self.dest = 0, 680
-        surface.blit(self.text3, self.dest)
+        if self.rand != 1:
+            self.dest = 92, 552
+            surface.blit(self.text3, self.dest)
         # self.text_box.render()
         pg.display.flip()
     

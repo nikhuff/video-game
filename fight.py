@@ -16,9 +16,6 @@ while True:
 
     dest = 0,0
     dest2 = 450,450
-    rect1 = pg.Surface((115, 40))
-    rect2 = pg.Surface((10, 10))
-    rect2.fill((29, 134, 206))
 
 
     keys = pg.key.get_pressed()
