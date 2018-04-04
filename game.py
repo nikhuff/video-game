@@ -167,11 +167,14 @@ class TitleScreen(GameState):
             surface.blit(line, line_rect)
         option_rect = pg.Rect(WIDTH/2 - 55, HEIGHT/2 + 45 + 20 * (self.index + 1), 10, 10)
         pg.draw.rect(surface, pg.Color("darkgreen"), option_rect)
-    
-    
+
+
 class Gameplay(GameState):
+
     def __init__(self):
         super(Gameplay, self).__init__()
+        self.textbox = pg.image.load('textbox.png')
+        self.text = pg.Surface((100,100))
         self.map = TiledMap(path.join(map_folder, 'city.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
@@ -185,10 +188,10 @@ class Gameplay(GameState):
                 Obstacle(self, tile_object.x, tile_object.y,
                          tile_object.width, tile_object.height)
             if tile_object.name == 'npc':
-                NPC(self, tile_object.x, tile_object.y)
+                NPC(self, tile_object.x, tile_object.y, self.textbox, self.text)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
-        
+
     def startup(self, persistent):
         self.persist = persistent
 
@@ -203,11 +206,11 @@ class Gameplay(GameState):
             elif event.key == pg.K_f:
                 self.next_state = "BATTLE"
                 self.done = True
-         
+
     def update(self, dt):
         self.all_sprites.update(dt)
         self.camera.update(self.player)
-                 
+
     def draw(self, surface):
         # self.screen.fill(DARKGREY)
         surface.blit(self.map_img, self.camera.apply_rect(self.map_rect))
@@ -217,7 +220,12 @@ class Gameplay(GameState):
                 pg.draw.rect(surface, GREEN, self.camera.apply_rect(sprite.rect), 1)
         if self.draw_debug:
             for wall in self.walls:
-                pg.draw.rect(surface, GREEN, self.camera.apply_rect(wall.rect), 1)                
+                pg.draw.rect(surface, GREEN, self.camera.apply_rect(wall.rect), 1)
+
+        dest = (62,462)
+        surface.blit(self.textbox, dest)
+        dest =(92,492)
+        surface.blit(self.text, dest)
         # self.text_box.render()
         pg.display.flip()
 
@@ -227,7 +235,7 @@ class Battle(GameState):
         super(Battle, self).__init__()
         self.textboxy = pg.image.load('textbox.png')
         self.rand = 0
-        self.choice = None
+        self.choice = 1
         self.dest = 0,0
         self.dest2 = 450,450
         self.hello = pg.font.SysFont(None, 45, False, False, None)
@@ -238,7 +246,7 @@ class Battle(GameState):
         
     def startup(self, persistent):
         self.persist = persistent
-        self.choice = None
+        self.choice = 1
         
     def get_event(self, event):
         if event.type == pg.QUIT:

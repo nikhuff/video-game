@@ -121,9 +121,12 @@ class Player(pg.sprite.Sprite):
 
 class NPC(pg.sprite.Sprite):
     # player sprite
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, textbox, text):
+        self.text = text
         self.groups = game.all_sprites, game.npcs
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.screen = pg.display.set_mode((1024, 768))
+        self.textbox = textbox
         self.game = game
         self.ss = Spritesheet(os.path.join(characters_folder, Sprite_list.random_sprite()))
         self.images_up = self.ss.images_at(UP, SS)
@@ -151,9 +154,12 @@ class NPC(pg.sprite.Sprite):
             self.dx *= -1
             self.dy *= -1
             self.rect.center = (self.x, self.y)
+
     def interact(self):
-        self.dialogue = speech.random_sentence()
-        return self.dialogue
+
+        font = pg.font.SysFont(None, 45, False, False, None)
+        self.text = speech.random_sentence()
+
 
     def bot_move(self):
         self.dx = 0
