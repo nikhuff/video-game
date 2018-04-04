@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="61" tileheight="61" infinite="0" nextobjectid="58">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="61" tileheight="61" infinite="0" nextobjectid="74">
  <tileset firstgid="1" source="roguelikeCity_magenta.tsx"/>
  <layer name="ground" width="50" height="30">
   <data encoding="csv">
@@ -140,7 +140,7 @@
  <objectgroup name="obstacles">
   <object id="1" name="building" x="427" y="0" width="610" height="610"/>
   <object id="2" name="building" x="0" y="122" width="427" height="366"/>
-  <object id="3" name="player" x="1891" y="1570.75" width="30.5" height="30.5"/>
+  <object id="3" name="player" x="198.25" y="564.25" width="30.5" height="30.5"/>
   <object id="4" name="building" x="0" y="549" height="1281"/>
   <object id="5" name="building" x="1037" y="0" width="1997.75"/>
   <object id="6" name="building" x="0" y="1830" width="3050"/>
@@ -181,15 +181,31 @@
   <object id="45" name="building" x="2394.25" y="610" width="45.75"/>
   <object id="46" name="building" x="1128.5" y="366" height="15.25"/>
   <object id="47" name="building" x="1128.5" y="488" height="15.25"/>
-  <object id="48" name="npc" x="884.5" y="1037" width="30.5" height="30.5"/>
-  <object id="49" name="npc" x="2013" y="1037" width="30.5" height="30.5"/>
-  <object id="50" name="npc" x="2607.75" y="1235.25" width="30.5" height="30.5"/>
-  <object id="51" name="npc" x="2806" y="1235.25" width="30.5" height="30.5"/>
-  <object id="52" name="npc" x="2729.75" y="1326.75" width="30.5" height="30.5"/>
-  <object id="53" name="npc" x="2607.75" y="1403" width="30.5" height="30.5"/>
-  <object id="54" name="npc" x="2836.5" y="1418.25" width="30.5" height="30.5"/>
-  <object id="55" name="npc" x="1464" y="488" width="30.5" height="30.5"/>
-  <object id="56" name="npc" x="579.5" y="1159" width="30.5" height="30.5"/>
-  <object id="57" name="npc" x="854" y="1525" width="30.5" height="30.5"/>
+  <object id="48" name="npc" x="533.75" y="1403" width="30.5" height="30.5"/>
+  <object id="49" name="npc" x="1784.25" y="991.25" width="30.5" height="30.5"/>
+  <object id="50" name="npc" x="991.25" y="1204.75" width="30.5" height="30.5"/>
+  <object id="51" name="npc" x="2912.75" y="1174.25" width="30.5" height="30.5"/>
+  <object id="52" name="npc" x="2562" y="1342" width="30.5" height="30.5"/>
+  <object id="53" name="npc" x="854" y="991.25" width="30.5" height="30.5"/>
+  <object id="54" name="npc" x="2912.75" y="1448.75" width="30.5" height="30.5"/>
+  <object id="55" name="npc" x="1113.25" y="106.75" width="30.5" height="30.5"/>
+  <object id="56" name="npc" x="15.25" y="1403" width="30.5" height="30.5"/>
+  <object id="57" name="npc" x="488" y="1067.5" width="30.5" height="30.5"/>
+  <object id="58" name="npc" x="488" y="1769" width="30.5" height="30.5"/>
+  <object id="59" name="npc" x="838.75" y="1570.75" width="30.5" height="30.5"/>
+  <object id="60" name="npc" x="1250.5" y="1494.5" width="30.5" height="30.5"/>
+  <object id="61" name="npc" x="1509.75" y="564.25" width="30.5" height="30.5"/>
+  <object id="62" name="npc" x="2943.25" y="716.75" width="30.5" height="30.5"/>
+  <object id="63" name="npc" x="2745" y="716.75" width="30.5" height="30.5"/>
+  <object id="64" name="npc" x="2562" y="716.75" width="30.5" height="30.5"/>
+  <object id="65" name="npc" x="2302.75" y="625.25" width="30.5" height="30.5"/>
+  <object id="66" name="npc" x="2302.75" y="625.25" width="30.5" height="30.5"/>
+  <object id="67" name="npc" x="2165.5" y="625.25" width="30.5" height="30.5"/>
+  <object id="68" name="npc" x="2165.5" y="625.25" width="30.5" height="30.5"/>
+  <object id="69" name="npc" x="1220" y="945.5" width="30.5" height="30.5"/>
+  <object id="70" name="npc" x="1220" y="945.5" width="30.5" height="30.5"/>
+  <object id="71" name="npc" x="1891" y="1616.5" width="30.5" height="30.5"/>
+  <object id="72" name="npc" x="1952" y="1220" width="30.5" height="30.5"/>
+  <object id="73" name="npc" x="1494.5" y="91.5" width="30.5" height="30.5"/>
  </objectgroup>
 </map>
