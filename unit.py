@@ -46,24 +46,31 @@ class Player(pg.sprite.Sprite):
         self.y = y
         self.dx = 0
         self.dy = 0
+        self.is_talking = False
+        self.can_interact = True
+        self.time_elapsed = 0
 
     def get_keys(self):
         self.dx, self.dy = 0, 0
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT]:
-            self.dx = -PLAYER_SPEED
-        elif keys[pg.K_RIGHT]:
-            self.dx = PLAYER_SPEED
-        elif keys[pg.K_UP]:
-            self.dy = -PLAYER_SPEED
-        elif keys[pg.K_DOWN]:
-            self.dy = PLAYER_SPEED
-        elif keys[pg.K_a]:
-            print("Welcome to punch town, population...You!")
-        elif keys[pg.K_s]:
-            print("Sup my homie?")
-        elif keys[pg.K_d]:
-            print("Fly, you fools!")
+        if self.is_talking and self.can_interact:
+            if keys[pg.K_z]:
+                self.is_talking = False
+        else:
+            if keys[pg.K_LEFT]:
+                self.dx = -PLAYER_SPEED
+            elif keys[pg.K_RIGHT]:
+                self.dx = PLAYER_SPEED
+            elif keys[pg.K_UP]:
+                self.dy = -PLAYER_SPEED
+            elif keys[pg.K_DOWN]:
+                self.dy = PLAYER_SPEED
+            elif keys[pg.K_a]:
+                print("Welcome to punch town, population...You!")
+            elif keys[pg.K_s]:
+                print("Sup my homie?")
+            elif keys[pg.K_d]:
+                print("Fly, you fools!")
 
     def get_mouse(self):
         if pg.mouse.get_pressed()[0] == True:
@@ -87,7 +94,10 @@ class Player(pg.sprite.Sprite):
             self.rect.center = (self.x, self.y)
             keys = pg.key.get_pressed()
             if keys[pg.K_z]:
-                npc.interact()
+                if self.can_interact:
+                    npc.interact()
+                    self.is_talking = True
+                    self.can_interact = False
             npc.x -= npc.dx * dt
             npc.y -= npc.dy * dt
             npc.dx = 0
@@ -119,12 +129,16 @@ class Player(pg.sprite.Sprite):
 
         self.image = self.current_frame[int(self.frame)]
 
+        if not self.can_interact:
+            self.time_elapsed += 1
+            if self.time_elapsed > 10:
+                self.can_interact = True
+                self.time_elapsed = 0
+
 class NPC(pg.sprite.Sprite):
     # player sprite
     def __init__(self, game, x, y, textbox, text):
         self.text = text
-        self.can_interact = True
-        self.time_elapsed = 0
         self.groups = game.all_sprites, game.npcs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.screen = pg.display.set_mode((1024, 768))
@@ -158,13 +172,12 @@ class NPC(pg.sprite.Sprite):
             self.rect.center = (self.x, self.y)
 
     def interact(self):
-        if self.can_interact:
-            font = pg.font.SysFont(None, 45, False, False, None)
-            font = pg.font.SysFont(None, 45, False, False, None)
-            self.text = speech.random_sentence()
-            print(self.text)
-            self.can_interact = False
-            self.can_interact = False
+        font = pg.font.SysFont(None, 45, False, False, None)
+        font = pg.font.SysFont(None, 45, False, False, None)
+        self.text = speech.random_sentence()
+        print(self.text)
+        self.can_interact = False
+        self.can_interact = False
 
     def bot_move(self):
         self.dx = 0
@@ -204,12 +217,6 @@ class NPC(pg.sprite.Sprite):
         self.get_direction()
         if self.count == 80:
             self.count = 0
-        
-        if not self.can_interact:
-            self.time_elapsed += 1
-            if self.time_elapsed > 10:
-                self.can_interact = True
-                self.time_elapsed = 0
 
         if self.dx == 0 and self.dy == 0:
             self.frame = 0
