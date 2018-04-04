@@ -123,6 +123,8 @@ class NPC(pg.sprite.Sprite):
     # player sprite
     def __init__(self, game, x, y, textbox, text):
         self.text = text
+        self.can_interact = True
+        self.time_elapsed = 0
         self.groups = game.all_sprites, game.npcs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.screen = pg.display.set_mode((1024, 768))
@@ -145,7 +147,7 @@ class NPC(pg.sprite.Sprite):
         self.dialogue = "I AM ERROR"
         self.count = 0
 
-    #function to call to generate dialogue returns a sentence for NPC to say
+    # function to call to generate dialogue returns a sentence for NPC to say
     def generate_dialogue(self):
         return self.dialogue
 
@@ -156,10 +158,13 @@ class NPC(pg.sprite.Sprite):
             self.rect.center = (self.x, self.y)
 
     def interact(self):
-
-        font = pg.font.SysFont(None, 45, False, False, None)
-        self.text = speech.random_sentence()
-
+        if self.can_interact:
+            font = pg.font.SysFont(None, 45, False, False, None)
+            font = pg.font.SysFont(None, 45, False, False, None)
+            self.text = speech.random_sentence()
+            print(self.text)
+            self.can_interact = False
+            self.can_interact = False
 
     def bot_move(self):
         self.dx = 0
@@ -199,6 +204,12 @@ class NPC(pg.sprite.Sprite):
         self.get_direction()
         if self.count == 80:
             self.count = 0
+        
+        if not self.can_interact:
+            self.time_elapsed += 1
+            if self.time_elapsed > 10:
+                self.can_interact = True
+                self.time_elapsed = 0
 
         if self.dx == 0 and self.dy == 0:
             self.frame = 0
