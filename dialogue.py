@@ -3,10 +3,63 @@ import os
 from settings import *
 import random
 
+class TextRectException(BaseException):
+    def __init__(self, message=None):
+            self.message = message
+
+    def __str__(self):
+        return self.message
+
+def multiLineSurface(string, font, surface, blank_surface, fontColour, justification=0):
+    finalLines = []
+    requestedLines = string.splitlines()
+    rect = surface.get_rect()
+    # Create a series of lines that will fit on the provided
+    # rectangle.
+    for requestedLine in requestedLines:
+        if font.size(requestedLine)[0] > rect.width - 70:
+            words = requestedLine.split(' ')
+            # if any of our words are too long to fit, return.
+            for word in words:
+                if font.size(word)[0] >= rect.width:
+                    raise TextRectException("The word " + word + " is too long to fit in the rect passed.")
+            # Start a new line
+            accumulatedLine = ""
+            for word in words:
+                testLine = accumulatedLine + word + " "
+                # Build the line while the words fit.
+                if font.size(testLine)[0] < rect.width - 30:
+                    accumulatedLine = testLine
+                else:
+                    finalLines.append(accumulatedLine)
+                    accumulatedLine = word + " "
+            finalLines.append(accumulatedLine)
+        else:
+            finalLines.append(requestedLine)
+
+    # Let's try to write the text out on the surface.
+    accumulatedHeight = 0
+    surface.blit(blank_surface, (0,0))
+    for line in finalLines:
+        if accumulatedHeight + font.size(line)[1] >= rect.height:
+            raise TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
+        if line != "":
+            tempSurface = font.render(line, 1, fontColour)
+        if justification == 0:
+            surface.blit(tempSurface, (22, 22 + accumulatedHeight))
+        elif justification == 1:
+            surface.blit(tempSurface, ((rect.width - tempSurface.get_width()) / 2, accumulatedHeight))
+        elif justification == 2:
+            surface.blit(tempSurface, (rect.width - tempSurface.get_width(), accumulatedHeight))
+        else:
+            raise TextRectException("Invalid justification argument: " + str(justification))
+        accumulatedHeight += font.size(line)[1]
+    return surface
 
 class Dialogue:
     def __init__(self):
-        self.sentences1 = ["Sometimes, all you need to do is completely make a fool of yourself and laugh it off to realize that life isn’t so bad after all.",
+        self.sentences1 = [
+                 "Sometimes, all you need to do is completely make a fool of yourself and laugh it off to realize that life isn’t so bad after all.",
                  "Last Friday I dreamed a spotted striped blue worm shook hands with a legless lizard.",
                  "I'd rather be a bird than a fish.",
                  "I want more detailed information for my report. guess I'll go to the library",

@@ -6,26 +6,12 @@ from os import path
 from settings import *
 from graphics import *
 from unit import *
+from dialogue import multiLineSurface
 import audio
 
 
 class Game(object):
-    """
-    A single instance of this class is responsible for 
-    managing which individual game state is active
-    and keeping it updated. It also handles many of
-    pygame's nuts and bolts (managing the event 
-    queue, framerate, updating the display, etc.). 
-    and its run method serves as the "game loop".
-    """
     def __init__(self, states, start_state):
-        """
-        Initialize the Game object.
-        
-        screen: the pygame display surface
-        states: a dict mapping state-names to GameState objects
-        start_state: name of the first active game state 
-        """
         self.done = False
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         self.clock = pg.time.Clock()
@@ -35,12 +21,10 @@ class Game(object):
         self.state = self.states[self.state_name]
         self.music = audio.title.play(-1)
     def event_loop(self):
-        """Events are passed for handling to the current state."""
         for event in pg.event.get():
             self.state.get_event(event)
             
     def flip_state(self):
-        """Switch to the next game state."""
         current_state = self.state_name
         next_state = self.state.next_state
         self.state.done = False
@@ -56,11 +40,6 @@ class Game(object):
 
 
     def update(self, dt):
-        """
-        Check for state flip and update active state.
-        
-        dt: milliseconds since last frame
-        """
         if self.state.quit:
             self.done = True
         elif self.state.done:
@@ -68,14 +47,9 @@ class Game(object):
         self.state.update(dt)
         
     def draw(self):
-        """Pass display surface to active state for drawing."""
         self.state.draw(self.screen)
         
     def run(self):
-        """
-        Pretty much the entirety of the game's runtime will be
-        spent inside this while loop.
-        """ 
         while not self.done:
             dt = self.clock.tick(FPS) / 1000
             self.event_loop()
@@ -85,9 +59,6 @@ class Game(object):
             
             
 class GameState(object):
-    """
-    Parent class for individual game states to inherit from. 
-    """
     def __init__(self):
         self.done = False
         self.quit = False
@@ -97,34 +68,15 @@ class GameState(object):
         self.font = pg.font.Font(None, 24)
         
     def startup(self, persistent):
-        """
-        Called when a state resumes being active.
-        Allows information to be passed between states.
-        
-        persistent: a dict passed from state to state
-        """
         self.persist = persistent        
         
     def get_event(self, event):
-        """
-        Handle a single event passed by the Game object.
-        """
         pass
-        
     
     def update(self, dt):
-        """
-        Update the state. Called by the Game object once
-        per frame. 
-        
-        dt: time since last frame
-        """
         pass
         
     def draw(self, surface):
-        """
-        Draw everything to the screen.
-        """
         pass
         
         
@@ -170,11 +122,11 @@ class TitleScreen(GameState):
 
 
 class Gameplay(GameState):
-
     def __init__(self):
         super(Gameplay, self).__init__()
         self.textbox = pg.image.load('textbox.png')
-        self.text = pg.Surface((100,100))
+        self.blank_textbox = pg.image.load('textbox.png')
+        self.text = text
         self.map = TiledMap(path.join(map_folder, 'city.tmx'))
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
@@ -188,13 +140,13 @@ class Gameplay(GameState):
                 Obstacle(self, tile_object.x, tile_object.y,
                          tile_object.width, tile_object.height)
             if tile_object.name == 'npc':
-                NPC(self, tile_object.x, tile_object.y, self.textbox, self.text)
+                NPC(self, tile_object.x, tile_object.y, self.text)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
+        self.hello = pg.font.SysFont(None, 45, False, False, None)
 
     def startup(self, persistent):
         self.persist = persistent
-
 
     def get_event(self, event):
         if event.type == pg.QUIT:
@@ -222,11 +174,13 @@ class Gameplay(GameState):
             for wall in self.walls:
                 pg.draw.rect(surface, GREEN, self.camera.apply_rect(wall.rect), 1)
 
-        dest = (62,462)
-        surface.blit(self.textbox, dest)
-        dest =(92,492)
-        surface.blit(self.text, dest)
-        # self.text_box.render()
+        if self.player.is_talking:
+            dest = (62,462)
+            self.text = multiLineSurface(text[0], self.hello, self.textbox, self.blank_textbox, (255, 255, 255))
+            surface.blit(self.text, dest)
+            # surface.blit(self.textbox, dest)
+            # dest = (92,492)
+            # self.text_box.render()
         pg.display.flip()
 
 

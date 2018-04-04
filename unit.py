@@ -6,6 +6,8 @@ from settings import *
 
 speech = dialogue.Dialogue()
 Sprite_list = dialogue.Sprites()
+# text = pg.Surface((1, 1))
+text = [""]
 
 class Spritesheet(object):
     def __init__(self, filename):
@@ -137,12 +139,11 @@ class Player(pg.sprite.Sprite):
 
 class NPC(pg.sprite.Sprite):
     # player sprite
-    def __init__(self, game, x, y, textbox, text):
+    def __init__(self, game, x, y, text):
         self.text = text
         self.groups = game.all_sprites, game.npcs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.screen = pg.display.set_mode((1024, 768))
-        self.textbox = textbox
         self.game = game
         self.ss = Spritesheet(os.path.join(characters_folder, Sprite_list.random_sprite()))
         self.images_up = self.ss.images_at(UP, SS)
@@ -160,10 +161,11 @@ class NPC(pg.sprite.Sprite):
         self.dy = 0
         self.dialogue = "I AM ERROR"
         self.count = 0
+        self.hello = pg.font.SysFont(None, 45, False, False, None)
 
     # function to call to generate dialogue returns a sentence for NPC to say
     def generate_dialogue(self):
-        return self.dialogue
+        self.dialogue = speech.random_sentence()
 
     def check_collision(self, dt):
         if pg.sprite.spritecollideany(self, self.game.walls):
@@ -172,12 +174,11 @@ class NPC(pg.sprite.Sprite):
             self.rect.center = (self.x, self.y)
 
     def interact(self):
-        font = pg.font.SysFont(None, 45, False, False, None)
-        font = pg.font.SysFont(None, 45, False, False, None)
-        self.text = speech.random_sentence()
-        print(self.text)
-        self.can_interact = False
-        self.can_interact = False
+        global text
+        self.generate_dialogue()
+        # text = self.hello.render(self.dialogue, 1, (255, 153, 18), None)
+        text[0] = self.dialogue
+        print(self.dialogue)
 
     def bot_move(self):
         self.dx = 0
