@@ -113,6 +113,8 @@ class Dialogue:
             self.sentences2.append(sentence)
             self.sentences1.remove(sentence)
             return sentence
+
+            
 class Sprites:
     def __init__(self):
         self.SpriteSheets1 = [
