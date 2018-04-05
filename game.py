@@ -328,7 +328,7 @@ class Battle(GameState):
                 self.choices = self.talks1[:]
             if self.selected == "But what about Sally?":
                 self.villainWillToFight -= 35
-                self.villainWillText =  self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1, (0, 255, 0), None)
+                self.villainWillText =  self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1, (0, 0, 255), None)
             elif self.selected == "Run":
                 self.rand = random.randrange(1, 3)
                 if self.rand == 1:
