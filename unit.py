@@ -138,6 +138,7 @@ class Player(pg.sprite.Sprite):
                 self.can_interact = True
                 self.time_elapsed = 0
 
+
 class NPC(pg.sprite.Sprite):
     # player sprite
     def __init__(self, game, x, y, text):
@@ -228,6 +229,97 @@ class NPC(pg.sprite.Sprite):
 
         self.image = self.current_frame[int(self.frame)]
 
+
+class Villain (pg.sprite.Sprite):
+    # player sprite
+    def __init__(self, game, x, y, text):
+        self.text = text
+        self.groups = game.all_sprites, game.npcs
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.screen = pg.display.set_mode((1024, 768))
+        self.game = game
+        self.ss = Spritesheet(os.path.join(characters_folder, "villain.png"))
+        self.images_up = self.ss.images_at(UP, SS)
+        self.images_right = self.ss.images_at(RIGHT, SS)
+        self.images_down = self.ss.images_at(DOWN, SS)
+        self.images_left = self.ss.images_at(LEFT, SS)
+        self.current_frame = self.images_down
+        self.image = self.current_frame[0]
+        self.frame = 0
+        self.draw_speed = .3
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.dx = 0
+        self.dy = 0
+        self.dialogue = "I AM ERROR"
+        self.count = 0
+        self.hello = pg.font.SysFont(None, 45, False, False, None)
+
+    # function to call to generate dialogue returns a sentence for NPC to say
+    def generate_dialogue(self):
+        self.dialogue = speech.villain_speech()
+
+    def check_collision(self, dt):
+        if pg.sprite.spritecollideany(self, self.game.walls):
+            self.dx *= -1
+            self.dy *= -1
+            self.rect.center = (self.x, self.y)
+
+    def interact(self):
+        audio.NPC_Interact.play()
+        global text
+        self.generate_dialogue()
+        # text = self.hello.render(self.dialogue, 1, (255, 153, 18), None)
+        text[0] = self.dialogue
+        print(self.dialogue)
+
+    def bot_move(self):
+        self.dx = 0
+        self.dy = 0
+        movement = 50
+        direction = random.randint(0, 8)
+        if direction == 0:
+            self.dx -= movement
+        if direction == 1:
+            self.dx += movement
+        if direction == 2:
+            self.dy -= movement
+        if direction == 3:
+            self.dx += movement
+        if direction >= 4:
+            self.dx = 0
+            self.dy = 0
+
+    def get_direction(self):
+        if self.dx > 0:
+            self.current_frame = self.images_right
+        elif self.dx < 0:
+            self.current_frame = self.images_left
+        elif self.dy > 0:
+            self.current_frame = self.images_down
+        elif self.dy < 0:
+            self.current_frame = self.images_up
+
+    def update(self, dt):
+        self.count += 1
+        if self.count == 1:
+            self.bot_move()
+        self.x += self.dx * dt
+        self.y += self.dy * dt
+        self.rect.center = (self.x, self.y)
+        self.check_collision(dt)
+        self.get_direction()
+        if self.count == 80:
+            self.count = 0
+
+        if self.dx == 0 and self.dy == 0:
+            self.frame = 0
+        else:
+            self.frame = (self.frame + self.draw_speed) % 4
+
+        self.image = self.current_frame[int(self.frame)]
+
 class Obstacle(pg.sprite.Sprite):
     def __init__(self, game, x, y, w, h):
         self.groups = game.walls
@@ -238,3 +330,5 @@ class Obstacle(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x
         self.rect.y = y
+
+

@@ -148,6 +148,7 @@ class Dialogue:
                  "First impressions are very important."
                  ]
         self.sentences2 = []
+        self.has_talked = False
     #pull sentence from list one to put in list two. If sentence one list is empty copy in sentence
     # list 2 to list 1 and delete the contents of list 2
 
@@ -166,6 +167,35 @@ class Dialogue:
             self.sentences2.append(sentence)
             self.sentences1.remove(sentence)
             return sentence
+
+    def villain_speech(self):
+        speech = [
+            "Here is the perfect spot for my machine... the city will be reborn.",
+            "...",
+            ".....",
+            "I am close to finishing the work my master started...",
+            "This grand city shall be remade even better.",
+            "soon suffering will end and all shall be renewed.",
+            "sacrifice..."
+            "from the end comes a new beginning"
+        ]
+        speech2 = [
+            "I thought I told you to stop meddling... you want to try and stop me again?",
+            "You never give up, do you? do you wish to fight me again?",
+            "You have foolishly returned, do you want to try and fight me again?",
+            "Why can't you see that I am right... you still want to stop me?",
+            "Back for more?",
+            "My master's brilliance also had resistance, are you going to continue to resist mine?"
+        ]
+        senetence = "I am ERROR"
+        rand = random.randint(0, len(speech) - 1)
+        rand2 = random.randint(0, len(speech2) - 1)
+        if self.has_talked == False:
+            sentence = "Hooded Man: "+ speech[rand] + " Oh, it's you. I am building a machine that will reset this city. Are here to try and stop me?"
+            self.has_talked = True
+        if self.has_talked == True:
+            sentence = "Hooded Man: " + speech[rand] + " " + speech2[rand2]
+        return sentence
 
             
 class Sprites:
