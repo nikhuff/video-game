@@ -249,6 +249,7 @@ class Battle(GameState):
         self.playerAttack = 15
 
         self.choices = [
+            "What will you do?",
             "Attack",
             "Talk",
             "Run",
@@ -262,6 +263,8 @@ class Battle(GameState):
         self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
         self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
         self.text3 = self.hello.render(self.choices[2], 1, (255, 153, 18), None)
+        self.text4 = self.hello.render(self.choices[3], 1, (255, 153, 18), None)
+
         self.attChoice = 0
 
     def startup(self, persistent):
@@ -318,9 +321,10 @@ class Battle(GameState):
 
     def update(self, dt):
         if self.choice == 1:
-            self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
-            self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
-            self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
+            self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
+            self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
+            self.text3 = self.hello.render(self.choices[2], 1, (255, 153, 18), None)
+            self.text4 = self.hello.render(self.choices[3], 1, (255, 153, 18), None)
         elif self.choice == 2:
             self.text = self.hello.render("Punch", 1, (255, 153, 18), None)
             self.text2 = self.hello.render("Kick", 1, (255, 153, 18), None)
@@ -359,6 +363,10 @@ class Battle(GameState):
         if self.rand != 1:
             self.dest = 92, 552
             surface.blit(self.text3, self.dest)
+
+        if self.rand != 1:
+            self.dest = 92, 582
+            surface.blit(self.text4, self.dest)
         # self.text_box.render()
         pg.display.flip()
 
@@ -376,6 +384,10 @@ class Battle(GameState):
             if self.rand != 1:
                 self.dest = 92, 552
                 surface.blit(self.text3, self.dest)
+
+            if self.rand != 1:
+                self.dest = 92, 582
+                surface.blit(self.text4, self.dest)
             # self.text_box.render()
             pg.display.flip()
 
