@@ -137,7 +137,8 @@ class Prologue(GameState):
             "Grandpa: Using our family's unique ability... SPIRIT WEAVING.",
             "Grandpa: I fear something happened to him in the city...",
             "Grandpa: Please grandson, go find your cousin.",
-            "Grandpa: use SPIRIT WEAVING if you must."
+            "Grandpa: use SPIRIT WEAVING if you must.",
+            "..."
         ]
         self.textbox = pg.image.load('textbox.png')
         self.line = 0
@@ -151,13 +152,14 @@ class Prologue(GameState):
             self.quit = True
         keys = pg.key.get_pressed()
         if keys[pg.K_z]:
-            if self.line < 5:
-                audio.NPC_Interact.play()
+            if self.line < 6:
+                if self.line < 5:
+                    audio.NPC_Interact.play()
                 self.line += 1
                 self.text = self.font.render(self.prologue[self.line], True, pg.Color("darkgreen"))
-            if self.line == 4:
-                audio.prologue.fadeout(2000)
-            if self.line >= 5:
+            if self.line == 5:
+                audio.prologue.fadeout(3000)
+            if self.line >= 6:
                 audio.game_start.play()
                 self.next_state = "GAMEPLAY"
                 self.done = True
