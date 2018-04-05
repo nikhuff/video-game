@@ -245,10 +245,6 @@ class Battle(GameState):
         self.villainAttack = 20
         self.villainWillToFight = 100
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 62fd5a899974ecde97b10efac290dde5bcfa3472
         self.playerHealth = 100
         self.playerAttack = 15
 
@@ -319,10 +315,7 @@ class Battle(GameState):
                 self.choice = 4
                 self.rand = random.randrange(1, 3)
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 62fd5a899974ecde97b10efac290dde5bcfa3472
     def update(self, dt):
         if self.choice == 1:
             self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
@@ -337,7 +330,7 @@ class Battle(GameState):
             self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
             self.text3 = self.hello.render("Meh meh meh", 1, (255, 153, 18), None)
         elif self.choice == 4:
-<<<<<<< HEAD
+
             if self.rand == 1:
                 self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18),
                                               None)
@@ -345,12 +338,12 @@ class Battle(GameState):
                 self.text = self.hello.render(
                     "with human feces lubricating your pants, you manage to run fast enough to escape", 1,
                     (255, 153, 18), None)
-=======
-             if self.rand == 1:
+
+            if self.rand == 1:
                 self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
-             else:
+            else:
                 self.text = self.hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
->>>>>>> 62fd5a899974ecde97b10efac290dde5bcfa3472
+
 
                 self.next_state = "GAMEPLAY"
                 self.done = True
@@ -396,11 +389,6 @@ class Battle(GameState):
             # self.text_box.render()
             pg.display.flip()
 
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 62fd5a899974ecde97b10efac290dde5bcfa3472
 if __name__ == "__main__":
     pg.init()
     pg.mixer.init()
