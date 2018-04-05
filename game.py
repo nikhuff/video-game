@@ -245,6 +245,8 @@ class Battle(GameState):
         self.villainAttack = 20
         self.villainWillToFight = 100
 
+
+
         self.playerHealth = 100
         self.playerAttack = 15
 
@@ -395,6 +397,8 @@ class Battle(GameState):
             surface.blit(self.text4, self.dest)
         # self.text_box.render()
         pg.display.flip()
+
+
 
         if self.count % 22 == 0:
             surface.blit(self.villain, (0, 7))
