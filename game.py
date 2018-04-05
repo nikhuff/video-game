@@ -254,16 +254,30 @@ class Battle(GameState):
             "Talk",
             "Run",
         ]
-
+        self.choices2 = [
+            "What will you do?",
+            "Attack",
+            "Talk",
+            "Run",
+        ]
+        self.talks1 =[
+            "Villain: I am doing this to better the city",
+            "But what about Sally?",
+            "But what about Sarah?",
+            "But what about Susan?"
+        ]
+        self.index = 0
         self.count = 0
         self.rand = 0
         self.choice = 1
         self.dest = 0, 0
         self.dest2 = 450, 450
         self.hello = pg.font.SysFont(None, 45, False, False, None)
+        self.selected = self.choices[self.index + 1]
 
-        self.villainHpText = self.hello.render(str(self.villainHealth), 1, (255, 0, 0), None)
+        self.villainHpText = self.hello.render("HP- " + str(self.villainHealth), 1, (255, 0, 0), None)
         self.playerHpText = self.hello.render(str(self.playerHealth), 1, (255, 153, 18), None)
+        self.villainWillText = self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1, (0, 0, 255), None)
 
         self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
         self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
@@ -278,6 +292,39 @@ class Battle(GameState):
         self.choice = 1
 
     def get_event(self, event):
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_UP]:
+            audio.menu_move.play()
+            self.index = ((self.index - 1) % 3)
+            self.selected = self.choices[self.index + 1]
+        elif keys[pg.K_DOWN]:
+            audio.menu_move.play()
+            self.index = ((self.index + 1) % 3)
+            self.selected = self.choices[self.index + 1]
+        elif keys[pg.K_z]:
+            if self.selected == "Attack":
+                audio.punch.play()
+                self.villainHealth -= self.playerAttack
+                self.villainHpText = self.hello.render("HP- " + str(self.villainHealth), 1, (255, 0, 0), None)
+            if self.selected == "Talk":
+                self.choices = self.talks1[:]
+            elif self.selected == "Run":
+                self.rand = random.randrange(1, 3)
+                if self.rand == 1:
+                    self.choices[0] = "You are a pansy and tried to run away....you failed"
+                else:
+                    self.choices[0] = "you manage to run fast enough to escape"
+                    if keys[pg.K_z]:
+                        self.choices = self.choices2[:]
+                        self.next_state = "GAMEPLAY"
+                        self.done = True
+
+
+
+
+
+#MICAH"S HARD WORK
         if event.type == pg.QUIT:
             self.quit = True
         elif event.type == pg.KEYDOWN:
@@ -290,8 +337,8 @@ class Battle(GameState):
 
                     if keys2[pg.K_q]:
                         self.attChoice = 1
-                        self.villainHealth -= self.playerAttack
-                        self.villainHpText = self.hello.render(str(self.villainHealth), 1, (255, 153, 18), None)
+
+
 
 
                     elif keys2[pg.K_w]:
@@ -377,23 +424,29 @@ class Battle(GameState):
         self.dest = (0, 0)
         surface.blit(self.villainHpText, self.dest, area=None, special_flags=0)
 
+        self.dest = (150, 0)
+        surface.blit(self.villainWillText, self.dest, area=None, special_flags=0)
+
         self.dest = 62, 462
         surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
         self.dest = 92, 492
         surface.blit(self.text, self.dest)
 
         if self.rand != 1:
-            self.dest = 92, 522
+            self.dest = 102, 522
             surface.blit(self.text2, self.dest)
 
         if self.rand != 1:
-            self.dest = 92, 552
+            self.dest = 102, 552
             surface.blit(self.text3, self.dest)
 
         if self.rand != 1:
-            self.dest = 92, 582
+            self.dest = 102, 582
             surface.blit(self.text4, self.dest)
         # self.text_box.render()
+
+        option_rect = pg.Rect(82, 532 + 30 * self.index, 10, 10)
+        pg.draw.rect(surface, pg.Color("orange"), option_rect)
         pg.display.flip()
 
         if self.count % 22 == 0:
@@ -409,19 +462,25 @@ class Battle(GameState):
             self.dest = (0, 0)
             surface.blit(self.villainHpText, self.dest, area=None, special_flags=0)
 
+            self.dest = (150, 0)
+            surface.blit(self.villainWillText, self.dest, area=None, special_flags=0)
+
             if self.rand != 1:
-                self.dest = 92, 522
+                self.dest = 102, 522
                 surface.blit(self.text2, self.dest)
 
             if self.rand != 1:
-                self.dest = 92, 552
+                self.dest = 102, 552
                 surface.blit(self.text3, self.dest)
 
             if self.rand != 1:
-                self.dest = 92, 582
+                self.dest = 102, 582
                 surface.blit(self.text4, self.dest)
             # self.text_box.render()
             pg.display.flip()
+        option_rect = pg.Rect(82, 532 + 30 * self.index, 10, 10)
+        pg.draw.rect(surface, pg.Color("orange"), option_rect)
+
 
 if __name__ == "__main__":
     pg.init()
