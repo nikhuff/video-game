@@ -248,6 +248,8 @@ class Battle(GameState):
         self.villainAttack = 20
         self.villainWillToFight = 100
 
+
+
         self.playerHealth = 100
         self.playerAttack = 15
 
@@ -264,6 +266,18 @@ class Battle(GameState):
             "Run",
         ]
         self.talks1 =[
+            "Villain: I am doing this to better the city",
+            "But what about Sally?",
+            "But what about Sarah?",
+            "But what about Susan?"
+        ]
+        self.talks2 =[
+            "Villain: I am doing this to better the city",
+            "But what about Sally?",
+            "But what about Sarah?",
+            "But what about Susan?"
+        ]
+        self.talks3 =[
             "Villain: I am doing this to better the city",
             "But what about Sally?",
             "But what about Sarah?",
@@ -312,6 +326,9 @@ class Battle(GameState):
                 self.villainHpText = self.hello.render("HP- " + str(self.villainHealth), 1, (255, 0, 0), None)
             if self.selected == "Talk":
                 self.choices = self.talks1[:]
+            if self.selected == "But what about Sally?":
+                self.villainWillToFight -= 35
+                self.villainWillText =  self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1, (0, 255, 0), None)
             elif self.selected == "Run":
                 self.rand = random.randrange(1, 3)
                 if self.rand == 1:
@@ -323,7 +340,13 @@ class Battle(GameState):
                         self.next_state = "GAMEPLAY"
                         self.done = True
 
+        if self.villainHealth <= 0:
+            self.next_state = "GAMEPLAY"
+            self.done = True
 
+        if self.villainWillToFight <= 0:
+            self.next_state = "GAMEPLAY"
+            self.done = True
 
 
 
@@ -451,6 +474,8 @@ class Battle(GameState):
         option_rect = pg.Rect(82, 532 + 30 * self.index, 10, 10)
         pg.draw.rect(surface, pg.Color("orange"), option_rect)
         pg.display.flip()
+
+
 
         if self.count % 22 == 0:
             surface.blit(self.villain, (0, 7))
