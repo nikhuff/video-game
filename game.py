@@ -238,42 +238,84 @@ class Battle(GameState):
     def __init__(self):
         super(Battle, self).__init__()
         self.textboxy = pg.image.load('textbox.png')
+
         self.villain = pg.image.load('villain.png')
+        self.villainHealth = 100
+        self.villainAttack = 20
+        self.villainWillToFight = 100
+
+
+        self.playerHealth = 100
+        self.playerAttack = 15
+
+        self.choices = [
+            "Attack",
+            "Talk",
+            "Run",
+        ]
         self.count = 0
         self.rand = 0
         self.choice = 1
         self.dest = 0,0
         self.dest2 = 450,450
         self.hello = pg.font.SysFont(None, 45, False, False, None)
-        self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
-        self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
-        self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
+        self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
+        self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
+        self.text3 = self.hello.render(self.choices[2], 1, (255, 153, 18), None)
         self.attChoice = 0
-        
+
     def startup(self, persistent):
         self.persist = persistent
         self.choice = 1
-        
+
     def get_event(self, event):
         if event.type == pg.QUIT:
             self.quit = True
-        keys = pg.key.get_pressed()
-        if keys[pg.K_a]:
-            self.choice = 2
-        elif keys[pg.K_s]:
-            self.choice = 3
-        elif keys[pg.K_d]:
-            self.choice = 4
-            self.rand = random.randrange(1, 3)
-        if pg.mouse.get_pressed()[0] == True:
-            x,y = pg.mouse.get_pos()
-            if x > 195 and x < 310 and y > 645 and y < 685:
+        elif event.type == pg.KEYDOWN:
+            keys = pg.key.get_pressed()
+            if keys[pg.K_a]:
                 self.choice = 2
-            elif x > 395 and x < 510 and y > 645 and y < 685:
+
+                if event.type == pg.KEYDOWN:
+                    keys2 = pg.key.get_pressed()
+
+                    if keys2[pg.K_q]:
+                        self.attChoice = 1
+                        self.villainHealth -= self.playerAttack
+
+                    elif keys2[pg.K_w]:
+
+                        self.attChoice = 2
+                        self.villainHealth -= self.playerAttack
+
+                    elif keys2[pg.K_e]:
+                        self.attChoice = 3
+                        self.villainHealth -= self.playerAttack
+
+            elif keys[pg.K_s]:
                 self.choice = 3
-            elif x > 600 and x < 715 and y > 645 and y < 685:
+
+                if event.type == pg.KEYDOWN:
+                    keys2 = pg.key.get_pressed()
+
+                    if keys2[pg.K_q]:
+                        self.attChoice = 1
+                        print("You done insult me!")
+
+                    elif keys2[pg.K_w]:
+
+                        self.attChoice = 2
+                        print("You done compliment me!")
+
+                    elif keys2[pg.K_e]:
+                        self.attChoice = 3
+                        print("You done meh meh me!")
+
+            elif keys[pg.K_d]:
                 self.choice = 4
-        
+                self.rand = random.randrange(1, 3)
+
+
     def update(self, dt):
         if self.choice == 1:
             self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
@@ -287,29 +329,19 @@ class Battle(GameState):
             self.text = self.hello.render("Insult", 1, (255, 153, 18), None)
             self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
             self.text3 = self.hello.render("Meh meh meh", 1, (255, 153, 18), None)
-            self.attChoice = 0
-            keysTalk = pg.key.get_pressed()
-            if keysTalk[pg.K_q]:
-                self.attChoice = 1
-            elif keysTalk[pg.K_w]:
-                self.attChoice = 2
-            elif keysTalk[pg.K_e]:
-                self.attChoice = 3
-            
-            if self.attChoice == 1:
-                print("You done insulted me!")
-            elif self.attChoice == 2:
-                print("You done complimented me!")
-            elif self.attChoice == 3:
-                print("You done creeped me out!.....weirdo")
         elif self.choice == 4:
-            if self.rand == 1:
+             if self.rand == 1:
                 self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
-            else:
+             else:
                 self.text = self.hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
+
                 self.next_state = "GAMEPLAY"
                 self.done = True
-                 
+
+        if self.villainHealth <= 0:
+            self.next_state = "GAMEPLAY"
+            self.done = True
+
     def draw(self, surface):
         self.count += 1
 
@@ -346,6 +378,7 @@ class Battle(GameState):
                 surface.blit(self.text3, self.dest)
             # self.text_box.render()
             pg.display.flip()
+
     
 if __name__ == "__main__":
     pg.init()
