@@ -254,16 +254,22 @@ class Battle(GameState):
             "Talk",
             "Run",
         ]
+
         self.count = 0
         self.rand = 0
         self.choice = 1
         self.dest = 0, 0
         self.dest2 = 450, 450
         self.hello = pg.font.SysFont(None, 45, False, False, None)
+
+        self.villainHpText = self.hello.render(str(self.villainHealth), 1, (255, 0, 0), None)
+        self.playerHpText = self.hello.render(str(self.playerHealth), 1, (255, 153, 18), None)
+
         self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
         self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
         self.text3 = self.hello.render(self.choices[2], 1, (255, 153, 18), None)
         self.text4 = self.hello.render(self.choices[3], 1, (255, 153, 18), None)
+
 
         self.attChoice = 0
 
@@ -285,15 +291,19 @@ class Battle(GameState):
                     if keys2[pg.K_q]:
                         self.attChoice = 1
                         self.villainHealth -= self.playerAttack
+                        self.villainHpText = self.hello.render(str(self.villainHealth), 1, (255, 153, 18), None)
+
 
                     elif keys2[pg.K_w]:
 
                         self.attChoice = 2
                         self.villainHealth -= self.playerAttack
+                        self.villainHpText = self.hello.render(str(self.villainHealth), 1, (255, 153, 18), None)
 
                     elif keys2[pg.K_e]:
                         self.attChoice = 3
                         self.villainHealth -= self.playerAttack
+                        self.villainHpText = self.hello.render(str(self.villainHealth), 1, (255, 153, 18), None)
 
             elif keys[pg.K_s]:
                 self.choice = 3
@@ -361,6 +371,12 @@ class Battle(GameState):
 
         surface.blit(self.villain, (0, 0))
 
+        self.dest = (6,491)
+        surface.blit(self.playerHpText, self.dest, area=None, special_flags=0)
+
+        self.dest = (0, 0)
+        surface.blit(self.villainHpText, self.dest, area=None, special_flags=0)
+
         self.dest = 62, 462
         surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
         self.dest = 92, 492
@@ -386,6 +402,12 @@ class Battle(GameState):
             surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
             self.dest = 92, 492
             surface.blit(self.text, self.dest)
+
+            self.dest = (6, 491)
+            surface.blit(self.playerHpText, self.dest, area=None, special_flags=0)
+
+            self.dest = (0, 0)
+            surface.blit(self.villainHpText, self.dest, area=None, special_flags=0)
 
             if self.rand != 1:
                 self.dest = 92, 522
