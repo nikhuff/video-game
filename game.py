@@ -33,8 +33,6 @@ class Game(object):
         self.state = self.states[self.state_name]
         self.state.startup(persistent)
         self.music.stop()
-        if self.state_name == "PROLOGUE":
-            self.music = audio.prologue.play(-1)
         if self.state_name == "GAMEPLAY":
             self.music = audio.city.play(-1)
         if self.state_name == "BATTLE":
@@ -45,12 +43,12 @@ class Game(object):
         if self.state.quit:
             self.done = True
         elif self.state.done:
-            self.flip_state()    
+            self.flip_state()
         self.state.update(dt)
-        
+
     def draw(self):
         self.state.draw(self.screen)
-        
+
     def run(self):
         while not self.done:
             dt = self.clock.tick(FPS) / 1000
@@ -58,8 +56,8 @@ class Game(object):
             self.update(dt)
             self.draw()
             pg.display.update()
-            
-            
+
+
 class GameState(object):
     def __init__(self):
         self.done = False
@@ -68,20 +66,20 @@ class GameState(object):
         self.screen_rect = pg.display.get_surface().get_rect()
         self.persist = {}
         self.font = pg.font.Font(None, 24)
-        
+
     def startup(self, persistent):
-        self.persist = persistent        
-        
+        self.persist = persistent
+
     def get_event(self, event):
         pass
-    
+
     def update(self, dt):
         pass
-        
+
     def draw(self, surface):
         pass
-        
-        
+
+
 class TitleScreen(GameState):
     def __init__(self):
         super(TitleScreen, self).__init__()
@@ -92,7 +90,7 @@ class TitleScreen(GameState):
         self.options = ["New Game", "Load", "Quit"]
         self.index = 0
         self.selected = self.options[self.index]
-        
+
     def get_event(self, event):
         if event.type == pg.QUIT:
             self.quit = True
@@ -101,7 +99,7 @@ class TitleScreen(GameState):
         if keys[pg.K_UP]:
             audio.menu_move.play()
             self.index = (self.index - 1) % 3
-            self.selected = self.options[self.index]            
+            self.selected = self.options[self.index]
         elif keys[pg.K_DOWN]:
             audio.menu_move.play()
             self.index = (self.index + 1) % 3
@@ -109,15 +107,13 @@ class TitleScreen(GameState):
         elif keys[pg.K_z]:
             audio.menu_select.play()
             if self.selected == "New Game":
-                self.next_state = "PROLOGUE"
-                self.done = True
-            if self.selected == "Load":
                 self.next_state = "GAMEPLAY"
                 self.done = True
             elif self.selected == "Quit":
+                audio.menu_quit.play()
                 self.quit = True
 
-    
+
     def draw(self, surface):
         surface.fill(pg.Color("black"))
         surface.blit(self.title, self.title_rect)
@@ -127,46 +123,6 @@ class TitleScreen(GameState):
             surface.blit(line, line_rect)
         option_rect = pg.Rect(WIDTH/2 - 55, HEIGHT/2 + 45 + 20 * (self.index + 1), 10, 10)
         pg.draw.rect(surface, pg.Color("darkgreen"), option_rect)
-
-class Prologue(GameState):
-    def __init__(self):
-        super(Prologue, self).__init__()
-        self.prologue = [
-            "Grandpa: It's been 2 weeks since Jordan disappeared.",
-            "Grandpa: He went to prove his Professor is innocent,",
-            "Grandpa: Using our family's unique ability... SPIRIT WEAVING.",
-            "Grandpa: I fear something happened to him in the city...",
-            "Grandpa: Please grandson, go find your cousin.",
-            "Grandpa: use SPIRIT WEAVING if you must."
-        ]
-        self.textbox = pg.image.load('textbox.png')
-        self.line = 0
-        self.text = self.font.render(self.prologue[0], True, pg.Color("darkgreen"))
-        self.title_rect = self.text.get_rect(center=(WIDTH / 2, HEIGHT / 2))
-        self.persist["screen_color"] = "black"
-        self.next_state = "GAMEPLAY"
-
-    def get_event(self, event):
-        if event.type == pg.QUIT:
-            self.quit = True
-        keys = pg.key.get_pressed()
-        if keys[pg.K_z]:
-            if self.line < 5:
-                audio.NPC_Interact.play()
-                self.line += 1
-                self.text = self.font.render(self.prologue[self.line], True, pg.Color("darkgreen"))
-            if self.line == 4:
-                audio.prologue.fadeout(2000)
-            if self.line >= 5:
-                audio.game_start.play()
-                self.next_state = "GAMEPLAY"
-                self.done = True
-
-    def draw(self, surface):
-        surface.fill(pg.Color("black"))
-
-        surface.blit(self.text, self.title_rect)
-        pg.display.flip()
 
 
 class Gameplay(GameState):
@@ -236,7 +192,16 @@ class Battle(GameState):
     def __init__(self):
         super(Battle, self).__init__()
         self.textboxy = pg.image.load('textbox.png')
+
         self.villain = pg.image.load('villain.png')
+        self.villainHealth = 100
+        self.villainAttack = 20
+        self.villainWillToFight = 100
+
+
+        self.playerHealth = 100
+        self.playerAttack = 15
+
         self.count = 0
         self.rand = 0
         self.choice = 1
@@ -247,31 +212,59 @@ class Battle(GameState):
         self.text2 = self.hello.render("Talk", 1, (255, 153, 18), None)
         self.text3 = self.hello.render("Run", 1, (255, 153, 18), None)
         self.attChoice = 0
-        
+
     def startup(self, persistent):
         self.persist = persistent
         self.choice = 1
-        
+
     def get_event(self, event):
         if event.type == pg.QUIT:
             self.quit = True
-        keys = pg.key.get_pressed()
-        if keys[pg.K_a]:
-            self.choice = 2
-        elif keys[pg.K_s]:
-            self.choice = 3
-        elif keys[pg.K_d]:
-            self.choice = 4
-            self.rand = random.randrange(1, 3)
-        if pg.mouse.get_pressed()[0] == True:
-            x,y = pg.mouse.get_pos()
-            if x > 195 and x < 310 and y > 645 and y < 685:
+        elif event.type == pg.KEYDOWN:
+            keys = pg.key.get_pressed()
+            if keys[pg.K_a]:
                 self.choice = 2
-            elif x > 395 and x < 510 and y > 645 and y < 685:
+
+                if event.type == pg.KEYDOWN:
+                    keys2 = pg.key.get_pressed()
+
+                    if keys2[pg.K_q]:
+                        self.attChoice = 1
+                        self.villainHealth -= self.playerAttack
+
+                    elif keys2[pg.K_w]:
+
+                        self.attChoice = 2
+                        self.villainHealth -= self.playerAttack
+
+                    elif keys2[pg.K_e]:
+                        self.attChoice = 3
+                        self.villainHealth -= self.playerAttack
+
+            elif keys[pg.K_s]:
                 self.choice = 3
-            elif x > 600 and x < 715 and y > 645 and y < 685:
+
+                if event.type == pg.KEYDOWN:
+                    keys2 = pg.key.get_pressed()
+
+                    if keys2[pg.K_q]:
+                        self.attChoice = 1
+                        print("You done insult me!")
+
+                    elif keys2[pg.K_w]:
+
+                        self.attChoice = 2
+                        print("You done compliment me!")
+
+                    elif keys2[pg.K_e]:
+                        self.attChoice = 3
+                        print("You done meh meh me!")
+
+            elif keys[pg.K_d]:
                 self.choice = 4
-        
+                self.rand = random.randrange(1, 3)
+
+
     def update(self, dt):
         if self.choice == 1:
             self.text = self.hello.render("Attack", 1, (255, 153, 18), None)
@@ -285,29 +278,19 @@ class Battle(GameState):
             self.text = self.hello.render("Insult", 1, (255, 153, 18), None)
             self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
             self.text3 = self.hello.render("Meh meh meh", 1, (255, 153, 18), None)
-            self.attChoice = 0
-            keysTalk = pg.key.get_pressed()
-            if keysTalk[pg.K_q]:
-                self.attChoice = 1
-            elif keysTalk[pg.K_w]:
-                self.attChoice = 2
-            elif keysTalk[pg.K_e]:
-                self.attChoice = 3
-            
-            if self.attChoice == 1:
-                print("You done insulted me!")
-            elif self.attChoice == 2:
-                print("You done complimented me!")
-            elif self.attChoice == 3:
-                print("You done creeped me out!.....weirdo")
         elif self.choice == 4:
-            if self.rand == 1:
+             if self.rand == 1:
                 self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
-            else:
+             else:
                 self.text = self.hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
+
                 self.next_state = "GAMEPLAY"
                 self.done = True
-                 
+
+        if self.villainHealth <= 0:
+            self.next_state = "GAMEPLAY"
+            self.done = True
+
     def draw(self, surface):
         self.count += 1
 
@@ -344,12 +327,11 @@ class Battle(GameState):
                 surface.blit(self.text3, self.dest)
             # self.text_box.render()
             pg.display.flip()
-    
+
 if __name__ == "__main__":
     pg.init()
     pg.mixer.init()
     states = {"TITLE": TitleScreen(),
-              "PROLOGUE": Prologue(),
               "GAMEPLAY": Gameplay(),
               "BATTLE": Battle()}
     game = Game(states, "TITLE")
