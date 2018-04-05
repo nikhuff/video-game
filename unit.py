@@ -2,6 +2,7 @@ import pygame as pg
 import os
 import random
 import dialogue
+import audio
 from settings import *
 
 speech = dialogue.Dialogue()
@@ -174,6 +175,7 @@ class NPC(pg.sprite.Sprite):
             self.rect.center = (self.x, self.y)
 
     def interact(self):
+        audio.NPC_Interact.play()
         global text
         self.generate_dialogue()
         # text = self.hello.render(self.dialogue, 1, (255, 153, 18), None)

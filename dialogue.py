@@ -122,10 +122,10 @@ class Dialogue:
                  "isn't it a bit unnerving that doctors call what they do practice?",
                  "I'm not a magician I just constantly lose rabbits and handkerchiefs.",
                  "People find it comforting when you say 'I'll pray for you' until they find out you worship Xarath the spider king.",
-                 "Did you know, Moses had the first tablet that could connect to the cloud."
-                 "The air is tasty here!"
-                 "I heard Andrew is a real goofball"
-                 "My boss Micah, he only wears sweats and sandals."
+                 "Did you know, Moses had the first tablet that could connect to the cloud.",
+                 "The air is tasty here!",
+                 "I heard Andrew is a real goofball",
+                 "My boss Micah, he only wears sweats and sandals.",
                  "My Buddy Nick is a great programmer, he says the key is to change stuff and just see what happens.",
                  "I am very busy right now",
                  "Weren't you ever taught not to talk to strangers?",

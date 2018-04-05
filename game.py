@@ -97,16 +97,20 @@ class TitleScreen(GameState):
 
         keys = pg.key.get_pressed()
         if keys[pg.K_UP]:
+            audio.menu_move.play()
             self.index = (self.index - 1) % 3
             self.selected = self.options[self.index]            
         elif keys[pg.K_DOWN]:
+            audio.menu_move.play()
             self.index = (self.index + 1) % 3
             self.selected = self.options[self.index]
         elif keys[pg.K_z]:
+            audio.menu_select.play()
             if self.selected == "New Game":
                 self.next_state = "GAMEPLAY"
                 self.done = True
             elif self.selected == "Quit":
+                audio.menu_quit.play()
                 self.quit = True
 
     
@@ -188,6 +192,8 @@ class Battle(GameState):
     def __init__(self):
         super(Battle, self).__init__()
         self.textboxy = pg.image.load('textbox.png')
+        self.villain = pg.image.load('villain.png')
+        self.count = 0
         self.rand = 0
         self.choice = 1
         self.dest = 0,0
@@ -259,7 +265,9 @@ class Battle(GameState):
                 self.done = True
                  
     def draw(self, surface):
-        surface.fill(pg.Color("black"))
+        self.count += 1
+
+        surface.blit(self.villain,(0,0))
 
         self.dest = 62, 462
         surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
@@ -275,6 +283,23 @@ class Battle(GameState):
             surface.blit(self.text3, self.dest)
         # self.text_box.render()
         pg.display.flip()
+
+        if self.count % 22 == 0:
+            surface.blit(self.villain, (0, 7))
+            self.dest = 62, 462
+            surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
+            self.dest = 92, 492
+            surface.blit(self.text, self.dest)
+
+            if self.rand != 1:
+                self.dest = 92, 522
+                surface.blit(self.text2, self.dest)
+
+            if self.rand != 1:
+                self.dest = 92, 552
+                surface.blit(self.text3, self.dest)
+            # self.text_box.render()
+            pg.display.flip()
     
 if __name__ == "__main__":
     pg.init()
