@@ -1,3 +1,4 @@
+
 import pygame as pg
 import sys
 import random
@@ -15,15 +16,16 @@ class Game(object):
         self.done = False
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         self.clock = pg.time.Clock()
-        self.dt = self.clock.tick(FPS) / 1000        
+        self.dt = self.clock.tick(FPS) / 1000
         self.states = states
         self.state_name = start_state
         self.state = self.states[self.state_name]
         self.music = audio.title.play(-1)
+
     def event_loop(self):
         for event in pg.event.get():
             self.state.get_event(event)
-            
+
     def flip_state(self):
         current_state = self.state_name
         next_state = self.state.next_state
@@ -40,17 +42,16 @@ class Game(object):
         if self.state_name == "BATTLE":
             self.music = audio.battle.play(-1)
 
-
     def update(self, dt):
         if self.state.quit:
             self.done = True
         elif self.state.done:
-            self.flip_state()    
+            self.flip_state()
         self.state.update(dt)
-        
+
     def draw(self):
         self.state.draw(self.screen)
-        
+
     def run(self):
         while not self.done:
             dt = self.clock.tick(FPS) / 1000
@@ -58,8 +59,8 @@ class Game(object):
             self.update(dt)
             self.draw()
             pg.display.update()
-            
-            
+
+
 class GameState(object):
     def __init__(self):
         self.done = False
@@ -68,31 +69,31 @@ class GameState(object):
         self.screen_rect = pg.display.get_surface().get_rect()
         self.persist = {}
         self.font = pg.font.Font(None, 24)
-        
+
     def startup(self, persistent):
-        self.persist = persistent        
-        
+        self.persist = persistent
+
     def get_event(self, event):
         pass
-    
+
     def update(self, dt):
         pass
-        
+
     def draw(self, surface):
         pass
-        
-        
+
+
 class TitleScreen(GameState):
     def __init__(self):
         super(TitleScreen, self).__init__()
         self.title = self.font.render("Spirit Weaver", True, pg.Color("dodgerblue"))
-        self.title_rect = self.title.get_rect(center=(WIDTH/2, HEIGHT/2))
+        self.title_rect = self.title.get_rect(center=(WIDTH / 2, HEIGHT / 2))
         self.persist["screen_color"] = "black"
         self.next_state = "GAMEPLAY"
         self.options = ["New Game", "Load", "Quit"]
         self.index = 0
         self.selected = self.options[self.index]
-        
+
     def get_event(self, event):
         if event.type == pg.QUIT:
             self.quit = True
@@ -101,7 +102,7 @@ class TitleScreen(GameState):
         if keys[pg.K_UP]:
             audio.menu_move.play()
             self.index = (self.index - 1) % 3
-            self.selected = self.options[self.index]            
+            self.selected = self.options[self.index]
         elif keys[pg.K_DOWN]:
             audio.menu_move.play()
             self.index = (self.index + 1) % 3
@@ -117,16 +118,16 @@ class TitleScreen(GameState):
             elif self.selected == "Quit":
                 self.quit = True
 
-    
     def draw(self, surface):
         surface.fill(pg.Color("black"))
         surface.blit(self.title, self.title_rect)
         for index, option in enumerate(self.options):
             line = self.font.render(option, True, pg.Color("dodgerblue"))
-            line_rect = line.get_rect(center=(WIDTH/2, HEIGHT/2 + 50 + 20 * (index + 1)))
+            line_rect = line.get_rect(center=(WIDTH / 2, HEIGHT / 2 + 50 + 20 * (index + 1)))
             surface.blit(line, line_rect)
-        option_rect = pg.Rect(WIDTH/2 - 55, HEIGHT/2 + 45 + 20 * (self.index + 1), 10, 10)
+        option_rect = pg.Rect(WIDTH / 2 - 55, HEIGHT / 2 + 45 + 20 * (self.index + 1), 10, 10)
         pg.draw.rect(surface, pg.Color("darkgreen"), option_rect)
+
 
 class Prologue(GameState):
     def __init__(self):
@@ -225,7 +226,7 @@ class Gameplay(GameState):
                 pg.draw.rect(surface, GREEN, self.camera.apply_rect(wall.rect), 1)
 
         if self.player.is_talking:
-            dest = (62,462)
+            dest = (62, 462)
             self.text = multiLineSurface(text[0], self.hello, self.textbox, self.blank_textbox, (255, 255, 255))
             surface.blit(self.text, dest)
             # surface.blit(self.textbox, dest)
@@ -244,7 +245,6 @@ class Battle(GameState):
         self.villainAttack = 20
         self.villainWillToFight = 100
 
-
         self.playerHealth = 100
         self.playerAttack = 15
 
@@ -257,8 +257,8 @@ class Battle(GameState):
         self.count = 0
         self.rand = 0
         self.choice = 1
-        self.dest = 0,0
-        self.dest2 = 450,450
+        self.dest = 0, 0
+        self.dest2 = 450, 450
         self.hello = pg.font.SysFont(None, 45, False, False, None)
         self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
         self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
@@ -334,10 +334,20 @@ class Battle(GameState):
             self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
             self.text3 = self.hello.render("Meh meh meh", 1, (255, 153, 18), None)
         elif self.choice == 4:
-             if self.rand == 1:
+
+            if self.rand == 1:
+                self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18),
+                                              None)
+            else:
+                self.text = self.hello.render(
+                    "with human feces lubricating your pants, you manage to run fast enough to escape", 1,
+                    (255, 153, 18), None)
+
+            if self.rand == 1:
                 self.text = self.hello.render("You are a pansy and tried to run away....you failed", 1, (255, 153, 18), None)
-             else:
+            else:
                 self.text = self.hello.render("with human feces lubricating your pants, you manage to run fast enough to escape", 1, (255, 153, 18), None)
+
 
                 self.next_state = "GAMEPLAY"
                 self.done = True
@@ -349,7 +359,7 @@ class Battle(GameState):
     def draw(self, surface):
         self.count += 1
 
-        surface.blit(self.villain,(0,0))
+        surface.blit(self.villain, (0, 0))
 
         self.dest = 62, 462
         surface.blit(self.textboxy, self.dest, area=None, special_flags=0)
@@ -391,7 +401,6 @@ class Battle(GameState):
             # self.text_box.render()
             pg.display.flip()
 
-    
 if __name__ == "__main__":
     pg.init()
     pg.mixer.init()
