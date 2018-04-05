@@ -86,8 +86,8 @@ class GameState(object):
 class TitleScreen(GameState):
     def __init__(self):
         super(TitleScreen, self).__init__()
-        self.title = self.font.render("Spirit Weaver", True, pg.Color("dodgerblue"))
-        self.title_rect = self.title.get_rect(center=(WIDTH / 2, HEIGHT / 2))
+        self.title = pg.image.load('./assets/Text/Title.png')
+        self.title_rect = self.title.get_rect(center=(WIDTH / 2, (HEIGHT / 2)-100))
         self.persist["screen_color"] = "black"
         self.next_state = "GAMEPLAY"
         self.options = ["New Game", "Load", "Quit"]
@@ -141,6 +141,7 @@ class Prologue(GameState):
             "Grandpa: use SPIRIT WEAVING if you must.",
             "..."
         ]
+        self.font = pg.font.Font(None, 44)
         self.textbox = pg.image.load('textbox.png')
         self.line = 0
         self.text = self.font.render(self.prologue[0], True, pg.Color("darkgreen"))
@@ -192,6 +193,8 @@ class Gameplay(GameState):
                          tile_object.width, tile_object.height)
             if tile_object.name == 'npc':
                 NPC(self, tile_object.x, tile_object.y, self.text)
+            if tile_object.name == 'villain':
+                Villain(self, tile_object.x, tile_object.y, self.text)
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
         self.hello = pg.font.SysFont(None, 45, False, False, None)
@@ -409,7 +412,7 @@ class Battle(GameState):
                 self.next_state = "GAMEPLAY"
                 self.done = True
 
-        if self.villainHealth <= 0:
+        if self.villainHealth <= 0 or self.villainWillToFight <= 0:
             self.next_state = "GAMEPLAY"
             self.done = True
 

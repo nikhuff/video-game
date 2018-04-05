@@ -278,15 +278,15 @@ class Villain (pg.sprite.Sprite):
         self.dx = 0
         self.dy = 0
         movement = 50
-        direction = random.randint(0, 8)
+        direction = random.randint(0, 4)
         if direction == 0:
-            self.dx -= movement
+            self.current_frame = self.images_right
         if direction == 1:
-            self.dx += movement
+            self.current_frame = self.images_left
         if direction == 2:
-            self.dy -= movement
+            self.current_frame = self.images_down
         if direction == 3:
-            self.dx += movement
+            self.current_frame = self.images_up
         if direction >= 4:
             self.dx = 0
             self.dy = 0
@@ -310,7 +310,7 @@ class Villain (pg.sprite.Sprite):
         self.rect.center = (self.x, self.y)
         self.check_collision(dt)
         self.get_direction()
-        if self.count == 80:
+        if self.count == 100:
             self.count = 0
 
         if self.dx == 0 and self.dy == 0:
