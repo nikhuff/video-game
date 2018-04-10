@@ -41,6 +41,8 @@ class Game(object):
             self.music = audio.city.play(-1)
         if self.state_name == "BATTLE":
             self.music = audio.battle.play(-1)
+        if self.state_name == "GAMEOVER":
+            self.music = audio.prologue.play(-1)
 
     def update(self, dt):
         if self.state.quit:
@@ -242,6 +244,7 @@ class Battle(GameState):
     def __init__(self):
         super(Battle, self).__init__()
         self.textboxy = pg.image.load('textbox.png')
+        self.playerTurn = True
 
         self.villain = pg.image.load('villain.png')
         self.villainHealth = 100
@@ -272,14 +275,14 @@ class Battle(GameState):
             "But what about Susan?"
         ]
         self.talks2 =[
-            "Villain: I am doing this to better the city",
-            "But what about Sally?",
+            "Villain: I hate children!!!",
+            "But what about Jimbo?",
             "But what about Sarah?",
             "But what about Susan?"
         ]
         self.talks3 =[
-            "Villain: I am doing this to better the city",
-            "But what about Sally?",
+            "Villain: I pooped my pants",
+            "But what about Jeffrica?",
             "But what about Sarah?",
             "But what about Susan?"
         ]
@@ -309,8 +312,8 @@ class Battle(GameState):
         self.choice = 1
 
     def get_event(self, event):
-
         keys = pg.key.get_pressed()
+        self.playerTurn = True
         if keys[pg.K_UP]:
             audio.menu_move.play()
             self.index = ((self.index - 1) % 3)
@@ -324,15 +327,49 @@ class Battle(GameState):
                 audio.punch.play()
                 self.villainHealth -= self.playerAttack
                 self.villainHpText = self.hello.render("HP- " + str(self.villainHealth), 1, (255, 0, 0), None)
+                self.playerTurn = False
             if self.selected == "Talk":
                 self.choices = self.talks1[:]
+                self.playerHealth += 15
             if self.selected == "But what about Sally?":
+                self.choices = self.talks2
                 self.villainWillToFight -= 35
                 self.villainWillText =  self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1, (0, 0, 255), None)
+                self.playerTurn = False
+
+            if self.selected != "But what about Sally?":
+                self.villainWillText =  self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1, (0, 0, 255), None)
+                self.playerTurn = False
+            if self.selected == "But what about Jimbo?":
+                self.choices = self.talks3
+                self.villainWillToFight -= 35
+                self.villainWillText = self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1,
+                                                         (0, 0, 255), None)
+                self.playerTurn = False
+
+            if self.selected != "But what about Jimbo?":
+                self.villainWillText = self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1,
+                                                         (0, 0, 255), None)
+                self.playerTurn = False
+
+            if self.selected == "But what about Jeffrica?":
+                self.choices = self.talks3
+                self.villainWillToFight -= 35
+                self.villainWillText = self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1,
+                                                         (0, 0, 255), None)
+                self.playerTurn = False
+
+            if self.selected != "But what about Jeffrica?":
+                self.villainWillText = self.hello.render("Will to Fight- " + str(self.villainWillToFight), 1,
+                                                         (0, 0, 255), None)
+                self.playerTurn = False
+
+
             elif self.selected == "Run":
                 self.rand = random.randrange(1, 3)
                 if self.rand == 1:
                     self.choices[0] = "You are a pansy and tried to run away....you failed"
+                    self.playerTurn = False
                 else:
                     self.choices[0] = "you manage to run fast enough to escape"
                     if keys[pg.K_z]:
@@ -340,12 +377,21 @@ class Battle(GameState):
                         self.next_state = "GAMEPLAY"
                         self.done = True
 
+
+        if self.playerTurn == False:
+            self.playerHealth -= 15
+            self.playerHpText = self.hello.render(str(self.playerHealth), 1, (255, 153, 18),None)
+
         if self.villainHealth <= 0:
             self.next_state = "GAMEPLAY"
             self.done = True
 
         if self.villainWillToFight <= 0:
             self.next_state = "GAMEPLAY"
+            self.done = True
+
+        if self.playerHealth <= 0:
+            self.next_state = "GAMEOVER"
             self.done = True
 
 
@@ -363,9 +409,6 @@ class Battle(GameState):
 
                     if keys2[pg.K_q]:
                         self.attChoice = 1
-
-
-
 
                     elif keys2[pg.K_w]:
 
@@ -404,14 +447,14 @@ class Battle(GameState):
 
     def update(self, dt):
         if self.choice == 1:
-            self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
-            self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
-            self.text3 = self.hello.render(self.choices[2], 1, (255, 153, 18), None)
-            self.text4 = self.hello.render(self.choices[3], 1, (255, 153, 18), None)
+           self.text = self.hello.render(self.choices[0], 1, (255, 153, 18), None)
+           self.text2 = self.hello.render(self.choices[1], 1, (255, 153, 18), None)
+           self.text3 = self.hello.render(self.choices[2], 1, (255, 153, 18), None)
+           self.text4 = self.hello.render(self.choices[3], 1, (255, 153, 18), None)
         elif self.choice == 2:
-            self.text = self.hello.render("Punch", 1, (255, 153, 18), None)
-            self.text2 = self.hello.render("Kick", 1, (255, 153, 18), None)
-            self.text3 = self.hello.render("Headbutt", 1, (255, 153, 18), None)
+           self.text = self.hello.render("Punch", 1, (255, 153, 18), None)
+           self.text2 = self.hello.render("Kick", 1, (255, 153, 18), None)
+           self.text3 = self.hello.render("Headbutt", 1, (255, 153, 18), None)
         elif self.choice == 3:
             self.text = self.hello.render("Insult", 1, (255, 153, 18), None)
             self.text2 = self.hello.render("Compliment", 1, (255, 153, 18), None)
@@ -510,13 +553,53 @@ class Battle(GameState):
         pg.draw.rect(surface, pg.Color("orange"), option_rect)
 
 
+class Gameover(GameState):
+    def __init__(self):
+        super(Gameover, self).__init__()
+        self.title = pg.image.load('./assets/Text/Title.png')
+        self.title_rect = self.title.get_rect(center=(WIDTH / 2, (HEIGHT / 2)-100))
+        self.persist["screen_color"] = "black"
+        self.next_state = "GAMEPLAY"
+        self.options = ["Quit"]
+        self.index = 0
+        self.selected = self.options[self.index]
+
+    def get_event(self, event):
+        if event.type == pg.QUIT:
+            self.quit = True
+
+        keys = pg.key.get_pressed()
+        if keys[pg.K_UP]:
+            audio.menu_move.play()
+            self.index = (self.index - 1) % 1
+            self.selected = self.options[self.index]
+        elif keys[pg.K_DOWN]:
+            audio.menu_move.play()
+            self.index = (self.index + 1) % 1
+            self.selected = self.options[self.index]
+        elif keys[pg.K_z]:
+            audio.menu_select.play()
+            if self.selected == "Quit":
+                self.quit = True
+    def draw(self, surface):
+        surface.fill(pg.Color("black"))
+        surface.blit(self.title, self.title_rect)
+        for index, option in enumerate(self.options):
+            line = self.font.render(option, True, pg.Color("dodgerblue"))
+            line_rect = line.get_rect(center=(WIDTH / 2, HEIGHT / 2 + 50 + 20 * (index + 1)))
+            surface.blit(line, line_rect)
+        option_rect = pg.Rect(WIDTH / 2 - 55, HEIGHT / 2 + 45 + 20 * (self.index + 1), 10, 10)
+        pg.draw.rect(surface, pg.Color("darkgreen"), option_rect)
+
 if __name__ == "__main__":
     pg.init()
     pg.mixer.init()
     states = {"TITLE": TitleScreen(),
               "PROLOGUE": Prologue(),
               "GAMEPLAY": Gameplay(),
-              "BATTLE": Battle()}
+              "BATTLE": Battle(),
+              "GAMEOVER": Gameover()}
+
     game = Game(states, "TITLE")
     game.run()
     pg.quit()
